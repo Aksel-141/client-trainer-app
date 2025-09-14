@@ -4,8 +4,13 @@ import "./index.css";
 import { createBrowserRouter } from "react-router";
 import RootLayout from "./RootLayout";
 import { RouterProvider } from "react-router/dom";
+
+import axios from "axios";
+//Роутер
 import navRoutes from "./router";
+//Сторінки
 import CreateExercisePage from "./pages/exercise/CreateExercisePage";
+import ExerciseListPage from "./pages/exercise/ExerciseListPage";
 
 const router = createBrowserRouter([
   {
@@ -20,9 +25,15 @@ const router = createBrowserRouter([
         path: navRoutes.createExercise.path,
         element: <CreateExercisePage />,
       },
+      {
+        path: navRoutes.exerciseList.path,
+        element: <ExerciseListPage />,
+      },
     ],
   },
 ]);
+
+axios.defaults.baseURL = "http://localhost:6189/api";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
