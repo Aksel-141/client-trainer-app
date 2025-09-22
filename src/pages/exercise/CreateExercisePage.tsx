@@ -11,11 +11,28 @@ import { useState } from "react";
 import navRoutes from "./../../router/index";
 import { toast } from "react-toastify";
 
+const muscleGroups = {
+  Груди: ["Груди"],
+  Спина: ["Широчайні", "Трапеція", "Ромбоподібні", "Еректори спини"],
+  Плечі: ["Передні дельти", "Середні дельти", "Задні дельти"],
+  Руки: ["Біцепс", "Трицепс", "Передпліччя"],
+  Ноги: [
+    "Ягодиці",
+    "Квадрицепс",
+    "Біцепс стегна",
+    "Привідні м’язи стегна",
+    "Відвідні м’язи стегна",
+    "Ікри",
+  ],
+  Прес: ["Прямі м’язи живота", "Косі м’язи живота", "Поперечний м’яз живота"],
+};
+
 export default function CreateExercisePage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<File[]>([]);
   const [video, setVideo] = useState<File | null>(null);
+  const [muscles, setMuscles] = useState<string[]>([]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -33,7 +50,10 @@ export default function CreateExercisePage() {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
+    formData.append("muscles", JSON.stringify(muscles));
+    // muscles.forEach((m) => formData.append("mucles", m));
     images.forEach((img) => formData.append("images", img));
+
     if (video) formData.append("video", video);
     try {
       await axios.post(`${navRoutes.createExercise.path}`, formData);
@@ -43,6 +63,15 @@ export default function CreateExercisePage() {
       console.log(error);
     }
   };
+  const onChangeMuscles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setMuscles((prev) => [...prev, value]);
+    } else {
+      setMuscles((prev) => prev.filter((m) => m !== value));
+    }
+  };
+
   return (
     <Box display="flex" p={2}>
       <Card
@@ -128,6 +157,25 @@ export default function CreateExercisePage() {
               />
             </Box>
           )}
+
+          <div>
+            {Object.entries(muscleGroups).map(([groupName, muscles]) => (
+              <div key={groupName}>
+                <h3>{groupName}</h3>
+                {muscles.map((muscle) => (
+                  <label key={muscle}>
+                    <input
+                      type="checkbox"
+                      name="muscles"
+                      value={muscle}
+                      onChange={onChangeMuscles}
+                    />
+                    {muscle}
+                  </label>
+                ))}
+              </div>
+            ))}
+          </div>
 
           <Button variant="contained" fullWidth onClick={handleSave}>
             Зберегти вправу

@@ -11,5 +11,9 @@ const navRoutes = {
     title: "Список вправ",
     path: "/exercise/all",
   },
+  createRoutine: {
+    title: "Стоврити рутину",
+    path: "/routine/create",
+  },
 };
 export default navRoutes;

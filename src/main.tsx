@@ -11,6 +11,7 @@ import navRoutes from "./router";
 //Сторінки
 import CreateExercisePage from "./pages/exercise/CreateExercisePage";
 import ExerciseListPage from "./pages/exercise/ExerciseListPage";
+import CreateRoutinePage from "./pages/routine/CreateRoutinePage";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: navRoutes.exerciseList.path,
         element: <ExerciseListPage />,
+      },
+      {
+        path: navRoutes.createRoutine.path,
+        element: <CreateRoutinePage />,
       },
     ],
   },
