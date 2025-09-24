@@ -22,6 +22,9 @@ export default function RootLayout() {
           <NavLink to={navRoutes.createRoutine.path} className="text-white">
             {navRoutes.createRoutine.title}
           </NavLink>
+          <NavLink to={navRoutes.routineList.path} className="text-white">
+            {navRoutes.routineList.title}
+          </NavLink>
         </Box>
       </Grid>
       <Grid size="grow">
