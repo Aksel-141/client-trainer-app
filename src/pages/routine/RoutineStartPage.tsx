@@ -4,17 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 import { Box, Button, CardMedia, Typography } from "@mui/material";
+import { getRoutine } from "../../api/routineApi";
+import { addStatistics } from "../../api/statisticApi";
 
 export default function RoutineStartPage() {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const [routine, setRoutine] = useState(null);
   const params = useParams();
 
-  async function getRoutine() {
+  async function getData() {
     try {
-      const data = await axios.get(`/routine/${params.id}`);
+      const data = await getRoutine(params.id);
       setRoutine(data.data.data);
-      // console.log(data.data.data);
     } catch (error) {
       toast.error("Сталася помилка, детльніше в консолі");
       console.log(error);
@@ -56,7 +57,7 @@ export default function RoutineStartPage() {
     };
 
     try {
-      await axios.post("/statistics/add", routineStatistics);
+      await addStatistics(routineStatistics);
       await localStorage.removeItem("savedRoutineId");
       await localStorage.removeItem("savedRoutineTime");
       navigate("/");
@@ -98,7 +99,7 @@ export default function RoutineStartPage() {
   //Кінець функції таймера
 
   useEffect(() => {
-    getRoutine();
+    getData();
   }, []);
   //Ініціація рутини
   useEffect(() => {

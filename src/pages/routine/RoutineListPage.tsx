@@ -1,51 +1,14 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import navRoutes from "../../router";
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router";
-interface Muscle {
-  id: number;
-  muscle: { id: number; name: string };
-}
-
-interface Exercise {
-  id: number;
-  title: string;
-  description: string;
-  images: string;
-  video: string | null;
-  muscles: Muscle[];
-}
-
-interface RoutineExercise {
-  id: number;
-  order: number;
-  reps?: number | null;
-  sets?: number | null;
-  duration?: number | null;
-  rest?: number | null;
-  exercise: Exercise;
-}
-
-interface Routine {
-  id: number;
-  title: string;
-  description?: string;
-  createdAt: string;
-  exercises: RoutineExercise[];
-}
-
-interface RoutinesResponse {
-  ok: boolean;
-  data: Routine[];
-}
+import { getRoutineAll } from "../../api/routineApi";
 
 export default function RoutineListPage() {
   const [routines, setroutines] = useState<[]>([]);
 
   async function getData() {
     try {
-      const data = await axios.get(`${navRoutes.routineList.path}`);
+      const data = await getRoutineAll();
       console.log(data);
 
       setroutines(data.data.data);
@@ -57,7 +20,7 @@ export default function RoutineListPage() {
   useEffect(() => {
     getData();
   }, []);
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <div>
       <div>

@@ -14,6 +14,7 @@ import ExerciseListPage from "./pages/exercise/ExerciseListPage";
 import CreateRoutinePage from "./pages/routine/CreateRoutinePage";
 import RoutineListPage from "./pages/routine/RoutineListPage";
 import RoutineStartPage from "./pages/routine/RoutineStartPage";
+import HomePage from "./pages/home/HomePage";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <>Main home page</>,
+        element: <HomePage />,
       },
       {
         path: navRoutes.createExercise.path,
