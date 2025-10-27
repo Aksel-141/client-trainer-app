@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router";
-import { getRoutineAll } from "../../api/routineApi";
+import { deleteRoutine, getRoutineAll } from "../../api/routineApi";
+import { toast } from "react-toastify";
 
 export default function RoutineListPage() {
   const [routines, setroutines] = useState<[]>([]);
@@ -12,6 +13,15 @@ export default function RoutineListPage() {
       console.log(data);
 
       setroutines(data.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function delRoutine(id: number) {
+    try {
+      await deleteRoutine(id);
+      getData();
+      toast.success("Успішно видалено");
     } catch (error) {
       console.log(error);
     }
@@ -66,6 +76,7 @@ export default function RoutineListPage() {
               >
                 Start
               </Button>
+              <Button onClick={() => delRoutine(routine.id)}>Видалити</Button>
             </Box>
           </Box>
         ))}

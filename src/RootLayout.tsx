@@ -2,7 +2,6 @@ import { Box, Grid, Typography } from "@mui/material";
 import { NavLink, Outlet } from "react-router";
 import navRoutes from "./router/index";
 import { ToastContainer } from "react-toastify";
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 
 const navItems = [
   { path: "/", label: "Головна", icon: "🏠" },
@@ -45,7 +44,7 @@ export default function RootLayout() {
                 padding: "10px 14px",
                 borderRadius: "8px",
                 fontWeight: isActive ? 600 : 400,
-                color: isActive ? "#60a5fa" : "#e5e7eb",
+                color: isActive ? "#60a5fa" : "#000000ff",
                 backgroundColor: isActive
                   ? "rgba(96,165,250,0.2)"
                   : "transparent",
@@ -65,15 +64,19 @@ export default function RootLayout() {
         size="grow"
         sx={{
           padding: "15px",
+          height: "100%",
+          width: "100%",
+          overflow: "hidden",
+          overflowY: "auto",
         }}
       >
         <Box
           sx={{
             // padding: "5px",
+            padding: "15px",
             height: "100%",
             width: "100%",
-            overflow: "hidden",
-            backgroundColor: "rgba(255, 255, 255, 0.15)",
+            backgroundColor: "rgba(255, 255, 255, 0)",
             borderRadius: "15px",
             boxSizing: "border-box",
           }}

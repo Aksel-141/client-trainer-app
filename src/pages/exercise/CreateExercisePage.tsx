@@ -7,25 +7,10 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import navRoutes from "./../../router/index";
 import { toast } from "react-toastify";
-
-const muscleGroups = {
-  Груди: ["Груди"],
-  Спина: ["Широчайні", "Трапеція", "Ромбоподібні", "Еректори спини"],
-  Плечі: ["Передні дельти", "Середні дельти", "Задні дельти"],
-  Руки: ["Біцепс", "Трицепс", "Передпліччя"],
-  Ноги: [
-    "Ягодиці",
-    "Квадрицепс",
-    "Біцепс стегна",
-    "Привідні м’язи стегна",
-    "Відвідні м’язи стегна",
-    "Ікри",
-  ],
-  Прес: ["Прямі м’язи живота", "Косі м’язи живота", "Поперечний м’яз живота"],
-};
+import { getMuscleByGroup } from "../../api/baseDataApi";
 
 export default function CreateExercisePage() {
   const [title, setTitle] = useState("");
@@ -71,6 +56,24 @@ export default function CreateExercisePage() {
       setMuscles((prev) => prev.filter((m) => m !== value));
     }
   };
+
+  // ------
+  const [muscleByGroup, setMuscleByGroup] = useState([]);
+  async function getBaseData() {
+    try {
+      const mbg = await getMuscleByGroup();
+
+      setMuscleByGroup(mbg.data.result);
+    } catch (error) {
+      toast.error("Сталася помилка завантаження груп м'язів!");
+      console.log(error);
+    }
+  }
+  console.log(muscleByGroup);
+
+  useEffect(() => {
+    getBaseData();
+  }, []);
 
   return (
     <Box display="flex" p={2}>
@@ -159,18 +162,18 @@ export default function CreateExercisePage() {
           )}
 
           <div>
-            {Object.entries(muscleGroups).map(([groupName, muscles]) => (
-              <div key={groupName}>
-                <h3>{groupName}</h3>
-                {muscles.map((muscle) => (
-                  <label key={muscle}>
+            {muscleByGroup.map((item, index) => (
+              <div key={index}>
+                <h3>{item.nameUa}</h3>
+                {item.muscles.map((item) => (
+                  <label key={item.id}>
                     <input
                       type="checkbox"
                       name="muscles"
-                      value={muscle}
+                      value={item.nameEn}
                       onChange={onChangeMuscles}
                     />
-                    {muscle}
+                    {item.nameUa}
                   </label>
                 ))}
               </div>

@@ -26,9 +26,9 @@ export default function ExerciseListPage() {
   async function getData() {
     try {
       const data = await axios.get(`${navRoutes.exerciseList.path}`);
-      console.log(data);
+      console.log(data.data.result);
 
-      setExercises(data.data.data);
+      setExercises(data.data.result);
     } catch (error) {
       console.log(error);
     }
@@ -48,10 +48,10 @@ export default function ExerciseListPage() {
   }, []);
 
   return (
-    <div>
+    <Box sx={{ width: "100%", height: "100%", overflowY: "auto" }}>
       {exercises.length > 0 ? (
-        exercises.map((e) => (
-          <Card>
+        exercises.map((e, index) => (
+          <Box key={index} sx={{ borderBottom: "1px solid black" }}>
             <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
               <CardMedia
                 component="img"
@@ -73,6 +73,16 @@ export default function ExerciseListPage() {
                   <Typography variant="body2" sx={{ color: "text.secondary" }}>
                     {e?.description}
                   </Typography>
+                  <Typography> М'язи які задіяні:</Typography>
+                  {e?.muscles.map((m, index) => (
+                    <Typography
+                      key={index}
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {m}
+                    </Typography>
+                  ))}
                 </Box>
                 <Box sx={{ display: "grid" }}>
                   <Button>
@@ -84,11 +94,11 @@ export default function ExerciseListPage() {
                 </Box>
               </CardContent>
             </Box>
-          </Card>
+          </Box>
         ))
       ) : (
         <Typography>Тут поки пусто</Typography>
       )}
-    </div>
+    </Box>
   );
 }
