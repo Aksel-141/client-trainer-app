@@ -11,7 +11,7 @@ export default function MuscleVisualizer({
   function ChangeMuscleColor() {
     const mId = document.querySelectorAll("g");
     mId.forEach((item) => {
-      if (muscleList.includes(item.id)) {
+      if (muscleList?.includes(item.id)) {
         item.classList.add("muscle-highlight");
         console.log(item.id);
       }
@@ -21,7 +21,7 @@ export default function MuscleVisualizer({
 
   useEffect(() => {
     ChangeMuscleColor();
-  }, []);
+  }, [muscleList]);
 
   return (
     <div style={{ width: "100%", display: "flex" }}>

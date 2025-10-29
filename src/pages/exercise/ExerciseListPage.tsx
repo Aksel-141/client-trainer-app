@@ -1,14 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import navRoutes from "../../router";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-} from "@mui/material";
+import { Box, Button, CardContent, CardMedia, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
