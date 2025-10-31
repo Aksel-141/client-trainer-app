@@ -196,10 +196,16 @@ export default function ViewOrEditSingleExercisePage() {
           </IconButton>
         </Box>
         {currExercise.video ? (
-          <AspectRatio ratio="16/9" sx={{ mt: 1, borderRadius: "lg" }}>
+          <AspectRatio
+            ratio={"16/9"}
+            sx={{ mt: 1, borderRadius: "lg" }}
+            minHeight={200}
+            maxHeight={500}
+          >
             <video
               src={`http://localhost:6189${currExercise.video}`}
               controls
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </AspectRatio>
         ) : (
