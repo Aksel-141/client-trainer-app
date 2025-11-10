@@ -5,6 +5,7 @@ import { Box, Button, CardContent, CardMedia, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
+import { Link } from "react-router";
 
 type Exercise = {
   id: number;
@@ -60,9 +61,11 @@ export default function ExerciseListPage() {
                 }}
               >
                 <Box>
-                  <Typography gutterBottom variant="h5">
-                    {e?.title}
-                  </Typography>
+                  <Link to={`/exercise/${e?.id}`}>
+                    <Typography gutterBottom variant="h5">
+                      {e?.title}
+                    </Typography>
+                  </Link>
                   <Typography variant="body2" sx={{ color: "text.secondary" }}>
                     {e?.description}
                   </Typography>
