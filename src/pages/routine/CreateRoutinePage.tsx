@@ -24,9 +24,7 @@ type RoutineExerciseInput = {
 export default function CreateRoutinePage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [routineExercises, setRoutineExercises] = useState<
-    RoutineExerciseInput[]
-  >([]); //Вправи в рутині
+  const [routineExercises, setRoutineExercises] = useState<RoutineExerciseInput[]>([]); //Вправи в рутині
   const [selectedExercise, setSelectedExercise] = useState<string>(""); //Вибрана вправа для додавання
 
   const [exercisesList, setExercisesList] = useState<Exercise[]>([]); //Список всіх вправ
@@ -36,7 +34,7 @@ export default function CreateRoutinePage() {
       const data = await axios.get(`${navRoutes.exerciseList.path}`);
       console.log(data);
 
-      setExercisesList(data.data.data);
+      setExercisesList(data.data.result);
     } catch (error) {
       console.log(error);
     }
@@ -92,9 +90,7 @@ export default function CreateRoutinePage() {
           </Typography>
           <Box>
             {routineExercises.map((ex, idx) => {
-              const exercise = exercisesList.find(
-                (item) => item.id === ex.exerciseId
-              );
+              const exercise = exercisesList.find((item) => item.id === ex.exerciseId);
               return (
                 <Box key={idx} sx={{ border: "1px solid", mb: 2, p: 2 }}>
                   <Typography>{exercise?.title}</Typography>
@@ -105,11 +101,7 @@ export default function CreateRoutinePage() {
                       value={ex.reps || ""}
                       onChange={(e) =>
                         setRoutineExercises((prev) =>
-                          prev.map((item, i) =>
-                            i === idx
-                              ? { ...item, reps: +e.target.value }
-                              : item
-                          )
+                          prev.map((item, i) => (i === idx ? { ...item, reps: +e.target.value } : item))
                         )
                       }
                     />
@@ -121,11 +113,7 @@ export default function CreateRoutinePage() {
                       value={ex.duration || ""}
                       onChange={(e) =>
                         setRoutineExercises((prev) =>
-                          prev.map((item, i) =>
-                            i === idx
-                              ? { ...item, duration: +e.target.value }
-                              : item
-                          )
+                          prev.map((item, i) => (i === idx ? { ...item, duration: +e.target.value } : item))
                         )
                       }
                     />
@@ -137,11 +125,7 @@ export default function CreateRoutinePage() {
                       value={ex.sets || ""}
                       onChange={(e) =>
                         setRoutineExercises((prev) =>
-                          prev.map((item, i) =>
-                            i === idx
-                              ? { ...item, sets: +e.target.value }
-                              : item
-                          )
+                          prev.map((item, i) => (i === idx ? { ...item, sets: +e.target.value } : item))
                         )
                       }
                     />
@@ -153,11 +137,7 @@ export default function CreateRoutinePage() {
                       value={ex.rest || ""}
                       onChange={(e) =>
                         setRoutineExercises((prev) =>
-                          prev.map((item, i) =>
-                            i === idx
-                              ? { ...item, rest: +e.target.value }
-                              : item
-                          )
+                          prev.map((item, i) => (i === idx ? { ...item, rest: +e.target.value } : item))
                         )
                       }
                     />
@@ -167,10 +147,7 @@ export default function CreateRoutinePage() {
                       if (idx === 0) return; // перший не можна підняти вище
                       setRoutineExercises((prev) => {
                         const newArr = [...prev];
-                        [newArr[idx - 1], newArr[idx]] = [
-                          newArr[idx],
-                          newArr[idx - 1],
-                        ];
+                        [newArr[idx - 1], newArr[idx]] = [newArr[idx], newArr[idx - 1]];
                         return newArr;
                       });
                     }}
@@ -183,10 +160,7 @@ export default function CreateRoutinePage() {
                       if (idx === routineExercises.length - 1) return; // останній не можна опустити нижче
                       setRoutineExercises((prev) => {
                         const newArr = [...prev];
-                        [newArr[idx + 1], newArr[idx]] = [
-                          newArr[idx],
-                          newArr[idx + 1],
-                        ];
+                        [newArr[idx + 1], newArr[idx]] = [newArr[idx], newArr[idx + 1]];
                         return newArr;
                       });
                     }}
@@ -209,21 +183,15 @@ export default function CreateRoutinePage() {
           </Box>
 
           <Box>
-            <input
-              list="brow"
-              value={selectedExercise}
-              onChange={(e) => setSelectedExercise(e.target.value)}
-            />
+            <input list="brow" value={selectedExercise} onChange={(e) => setSelectedExercise(e.target.value)} />
             <datalist id="brow">
-              {exercisesList.map((item) => (
+              {exercisesList?.map((item) => (
                 <option key={item.id} value={item.title} />
               ))}
             </datalist>
             <Button
               onClick={() => {
-                const found = exercisesList.find(
-                  (ex) => ex.title === selectedExercise
-                );
+                const found = exercisesList.find((ex) => ex.title === selectedExercise);
                 if (found) {
                   setRoutineExercises((prev) => [
                     ...prev,

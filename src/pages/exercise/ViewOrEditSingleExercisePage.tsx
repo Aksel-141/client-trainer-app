@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import getExerciseById from "../../api/exerciseApi";
+import { getExerciseById, updateExerciseById } from "../../api/exerciseApi";
 import MuscleVisualizer from "../../../components/MuscleVisualizer/index";
 import {
   Box,
@@ -16,11 +16,19 @@ import {
   AspectRatio,
   Chip,
   CircularProgress,
+  Button,
 } from "@mui/joy";
 import { EditOutlined } from "@mui/icons-material";
 
 export default function ViewOrEditSingleExercisePage() {
   const [currExercise, setCurrExercise] = useState<any>(null);
+  const [title, setTitle] = useState(currExercise?.title || "");
+  const [description, setDescription] = useState(currExercise?.description || "");
+  const [images, setImages] = useState<File[]>(currExercise?.images || []);
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [video, setVideo] = useState<File | null>(currExercise?.video || null);
+  const [newVideo, setNewVideo] = useState<File | null>(currExercise?.video || null);
+  const [muscles, setMuscles] = useState<string[]>(currExercise?.muscles || []);
   const params = useParams();
   const newTitle = useRef<HTMLInputElement | null>(null);
 
@@ -34,9 +42,36 @@ export default function ViewOrEditSingleExercisePage() {
     }
   }
 
+  async function handleUpdate() {
+    try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("muscles", JSON.stringify(muscles));
+      newImages.forEach((file) => formData.append("images", file));
+      if (newVideo) formData.append("video", newVideo);
+      console.log(title);
+
+      await updateExerciseById(Number(params.id), formData);
+      getExersice();
+      // setCurrExercise(res.data.result);
+    } catch (error) {
+      console.log(error);
+      toast.error("Сталася помилка при завантаженні вправи");
+    }
+  }
+
   useEffect(() => {
     getExersice();
   }, []);
+
+  useEffect(() => {
+    if (currExercise) {
+      setTitle(currExercise.title);
+      setDescription(currExercise.description);
+      setMuscles(currExercise.muscles);
+    }
+  }, [currExercise]);
 
   if (!currExercise) {
     return (
@@ -73,13 +108,10 @@ export default function ViewOrEditSingleExercisePage() {
             slotProps={{
               input: { ref: newTitle },
             }}
+            onChange={(e) => setTitle(e.target.value)}
             sx={{ flex: 1 }}
           />
-          <IconButton
-            variant="soft"
-            color="neutral"
-            onClick={() => console.log(newTitle.current?.value)}
-          >
+          <IconButton variant="soft" color="neutral" onClick={() => console.log(newTitle.current?.value)}>
             <EditOutlined />
           </IconButton>
         </Box>
@@ -92,6 +124,7 @@ export default function ViewOrEditSingleExercisePage() {
           <Textarea
             minRows={3}
             defaultValue={currExercise.description || ""}
+            onChange={(e) => setDescription(e.target.value)}
             sx={{ flex: 1 }}
           />
           <IconButton variant="soft" color="neutral">
@@ -150,6 +183,13 @@ export default function ViewOrEditSingleExercisePage() {
       {/* Фото */}
       <Box sx={{ mb: 4 }}>
         <FormLabel>Галерея</FormLabel>
+        <input
+          multiple
+          type="file"
+          accept="image/*"
+          onChange={(e) => setNewImages(Array.from(e.target.files || []))}
+          sx={{ mt: 1 }}
+        />
         <Box
           sx={{
             mt: 1,
@@ -161,16 +201,8 @@ export default function ViewOrEditSingleExercisePage() {
           {currExercise.images?.length ? (
             currExercise.images.map((item: string, index: number) => (
               <AspectRatio key={index} ratio="1" sx={{ borderRadius: "md" }}>
-                <img
-                  src={`http://localhost:6189${item}`}
-                  alt=""
-                  loading="lazy"
-                />
-                <IconButton
-                  variant="soft"
-                  color="neutral"
-                  onClick={() => console.log(newTitle.current?.value)}
-                >
+                <img src={`http://localhost:6189${item}`} alt="" loading="lazy" />
+                <IconButton variant="soft" color="neutral" onClick={() => console.log(newTitle.current?.value)}>
                   <EditOutlined />
                 </IconButton>
               </AspectRatio>
@@ -187,21 +219,12 @@ export default function ViewOrEditSingleExercisePage() {
       <Box>
         <Box sx={{ display: "flex" }}>
           <FormLabel>Відео</FormLabel>{" "}
-          <IconButton
-            variant="soft"
-            color="neutral"
-            onClick={() => console.log(newTitle.current?.value)}
-          >
+          <IconButton variant="soft" color="neutral" onClick={() => console.log(newTitle.current?.value)}>
             <EditOutlined />
           </IconButton>
         </Box>
         {currExercise.video ? (
-          <AspectRatio
-            ratio={"16/9"}
-            sx={{ mt: 1, borderRadius: "lg" }}
-            minHeight={200}
-            maxHeight={500}
-          >
+          <AspectRatio ratio={"16/9"} sx={{ mt: 1, borderRadius: "lg" }} minHeight={200} maxHeight={500}>
             <video
               src={`http://localhost:6189${currExercise.video}`}
               controls
@@ -214,6 +237,9 @@ export default function ViewOrEditSingleExercisePage() {
           </Typography>
         )}
       </Box>
+      <Button variant="soft" color="neutral" onClick={handleUpdate}>
+        Оновити вправу
+      </Button>
     </Box>
   );
 }

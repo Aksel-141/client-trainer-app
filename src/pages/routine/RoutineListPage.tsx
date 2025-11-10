@@ -48,22 +48,16 @@ export default function RoutineListPage() {
               <h2>{routine.title}</h2>
               {routine.description && <p>{routine.description}</p>}
               <ul>
-                {routine.exercises
+                {routine?.exercises
                   .sort((a, b) => a.order - b.order) // щоб порядок був правильний
                   .map((re) => (
                     <li key={re.id} style={{ marginBottom: "1rem" }}>
-                      <strong>{re.exercise.title}</strong> -{" "}
-                      {re.reps ? `${re.reps} reps` : ""}
+                      <strong>{re.exercise.title}</strong> - {re.reps ? `${re.reps} reps` : ""}
                       {re.sets ? ` x ${re.sets} sets` : ""}
                       {re.duration ? ` | ${re.duration}s` : ""}
                       {re.rest ? ` | rest ${re.rest}s` : ""}
                       <br />
-                      <em>
-                        М’язи:{" "}
-                        {re.exercise.muscles
-                          .map((m) => m.muscle.name)
-                          .join(", ")}
-                      </em>
+                      <em>М’язи: {re.exercise.muscles.map((m) => m.muscle.name).join(", ")}</em>
                     </li>
                   ))}
               </ul>
