@@ -19,10 +19,13 @@ export default function RoutineStartPage() {
 
   // Таймери
   const [setTimer, setSetTimer] = useState(0); // Таймер для сету (якщо duration)
+  const [prepTimer, setPrepTimer] = useState(0); // Таймер підготовки перед вправою
+  const [isPreparing, setIsPreparing] = useState(false); // Чи зараз йде підготовка
 
   // Окремі refs для інтервалів
   const workoutIntervalRef = useRef<number | null>(null);
   const setIntervalRef = useRef<number | null>(null);
+  const prepIntervalRef = useRef<number | null>(null);
 
   // Список виконаних сетів/вправ
   const [completed, setCompleted] = useState<
@@ -83,13 +86,8 @@ export default function RoutineStartPage() {
       // Спочатку запустити загальний таймер
       startWorkoutTimer();
 
-      // Потім якщо є duration у поточній вправі — стартувати її таймер відразу
-      const ex = routine?.exercises?.[currentExerciseIndexRef.current];
-      if (ex) {
-        if (ex.duration && setTimer === 0) {
-          startSetTimer(ex.duration);
-        }
-      }
+      // Запустити таймер підготовки перед першою вправою (новий таймер = 5 сек)
+      startPrepTimer(true);
     }
   }
 
@@ -148,6 +146,15 @@ export default function RoutineStartPage() {
           return newTime;
         });
       }, 1000);
+
+      // При відновленні — перевірити що саме було активне і відновити
+      if (isPreparing && prepTimer > 0) {
+        // Якщо була підготовка — відновити таймер підготовки
+        startPrepTimer();
+      } else if (!isPreparing && setTimer > 0) {
+        // Якщо був таймер сету — відновити його
+        startSetTimer(setTimer);
+      }
     }
   };
 
@@ -158,8 +165,9 @@ export default function RoutineStartPage() {
     }
     setIsWorkoutRunning(false);
 
-    // при паузі зупинити таймери сету/відпочинку але зберегти залишок
+    // при паузі зупинити таймери сету та підготовки але зберегти залишок
     clearSetInterval();
+    clearPrepInterval();
   };
 
   // допоміжні clear
@@ -168,6 +176,38 @@ export default function RoutineStartPage() {
       clearInterval(setIntervalRef.current);
       setIntervalRef.current = null;
     }
+  };
+
+  const clearPrepInterval = () => {
+    if (prepIntervalRef.current) {
+      clearInterval(prepIntervalRef.current);
+      prepIntervalRef.current = null;
+    }
+  };
+
+  // Функція для запуску таймера підготовки (5 секунд)
+  const startPrepTimer = (resetTimer = false) => {
+    clearPrepInterval();
+    setIsPreparing(true);
+    // Якщо resetTimer=true або prepTimer=0, встановити 5; інакше продовжити з поточного значення
+    const start = resetTimer || prepTimer === 0 ? 5 : prepTimer;
+    setPrepTimer(start);
+
+    prepIntervalRef.current = window.setInterval(() => {
+      setPrepTimer((prev) => {
+        if (prev <= 1) {
+          clearPrepInterval();
+          setIsPreparing(false);
+          // Після підготовки стартувати вправу
+          const ex = routine?.exercises?.[currentExerciseIndexRef.current];
+          if (ex?.duration) {
+            startSetTimer(ex.duration);
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
   // Функція для запуску таймера сету (якщо duration)
@@ -251,11 +291,9 @@ export default function RoutineStartPage() {
       currentSetIndexRef.current = newSet;
       localStorage.setItem("currentSetIndex", String(newSet));
 
-      // reset set timer and стартувати timer для сету, якщо duration заданий
+      // reset set timer and запустити таймер підготовки перед наступним сетом (новий = 5 сек)
       setSetTimer(0);
-      if (currentEx.duration) {
-        startSetTimer(currentEx.duration);
-      }
+      startPrepTimer(true);
     } else {
       // перейти до наступної вправи
       nextExercise();
@@ -265,6 +303,7 @@ export default function RoutineStartPage() {
   // Перейти до наступної вправи
   const nextExercise = () => {
     clearSetInterval();
+    clearPrepInterval();
     const exIndex = currentExerciseIndexRef.current;
     if (exIndex < (routine?.exercises?.length ?? 0) - 1) {
       const newEx = exIndex + 1;
@@ -275,12 +314,8 @@ export default function RoutineStartPage() {
       localStorage.setItem("currentExerciseIndex", String(newEx));
       localStorage.setItem("currentSetIndex", "0");
 
-      const nextEx = routine?.exercises?.[newEx];
-      if (nextEx?.duration) {
-        // почати таймер тільки якщо workout запущений
-        if (isWorkoutRunning) startSetTimer(nextEx.duration);
-        else setSetTimer(nextEx.duration); // підготувати залишок на відновлення
-      }
+      // Запустити таймер підготовки перед наступною вправою (новий = 5 сек)
+      startPrepTimer(true);
     } else {
       EndRoutine(); // завершити тренування
     }
@@ -291,6 +326,7 @@ export default function RoutineStartPage() {
     return () => {
       if (workoutIntervalRef.current) clearInterval(workoutIntervalRef.current);
       clearSetInterval();
+      clearPrepInterval();
     };
   }, []);
   //Ініціація рутини
@@ -333,21 +369,30 @@ export default function RoutineStartPage() {
                 alt="image"
               />
               <Box>
-                {currentExercise.reps !== null && currentExercise.reps !== undefined && (
-                  <Typography>Повторів: {currentExercise.reps}</Typography>
+                {isPreparing ? (
+                  <Typography variant="h4" color="primary">
+                    Підготовка: {prepTimer} сек
+                  </Typography>
+                ) : (
+                  <>
+                    {currentExercise.reps !== null && currentExercise.reps !== undefined && (
+                      <Typography>Повторів: {currentExercise.reps}</Typography>
+                    )}
+                    {currentExercise.duration && <Typography>Час: {setTimer} сек</Typography>}
+                  </>
                 )}
-                {currentExercise.duration && <Typography>Час: {setTimer} сек</Typography>}
               </Box>
             </Box>
 
             <Box sx={{ display: "flex", gap: 1 }}>
-              <Button onClick={completeSet} variant="contained" disabled={isCompletingState}>
+              <Button onClick={completeSet} variant="contained" disabled={isCompletingState || isPreparing}>
                 Завершити сет
               </Button>
               <Button
                 onClick={() => {
                   // кнопка Пропустити вправу
                   clearSetInterval();
+                  clearPrepInterval();
                   nextExercise();
                 }}
                 sx={{ ml: 1 }}
