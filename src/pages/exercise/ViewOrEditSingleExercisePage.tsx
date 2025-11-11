@@ -53,7 +53,10 @@ export default function ViewOrEditSingleExercisePage() {
       console.log(title);
 
       await updateExerciseById(Number(params.id), formData);
+      setNewImages([]);
+      setNewVideo(null);
       getExersice();
+      toast.success("Сталася помилка при завантаженні вправи");
       // setCurrExercise(res.data.result);
     } catch (error) {
       console.log(error);
