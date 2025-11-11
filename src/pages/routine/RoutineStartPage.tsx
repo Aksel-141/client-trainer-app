@@ -80,14 +80,16 @@ export default function RoutineStartPage() {
   function StartRoutine() {
     if (routine) {
       localStorage.setItem("savedRoutineId", String(routine?.id));
-      // Якщо є duration у поточній вправі — стартувати її таймер відразу
+      // Спочатку запустити загальний таймер
+      startWorkoutTimer();
+
+      // Потім якщо є duration у поточній вправі — стартувати її таймер відразу
       const ex = routine?.exercises?.[currentExerciseIndexRef.current];
       if (ex) {
         if (ex.duration && setTimer === 0) {
           startSetTimer(ex.duration);
         }
       }
-      startWorkoutTimer();
     }
   }
 
@@ -146,17 +148,6 @@ export default function RoutineStartPage() {
           return newTime;
         });
       }, 1000);
-
-      // при відновленні — якщо є активний set/rest, відновити їх
-      if (setTimer > 0) {
-        startSetTimer(setTimer);
-      } else {
-        // стартувати таймер поточної вправи якщо вимагається
-        const ex = routine?.exercises?.[currentExerciseIndexRef.current];
-        if (ex?.duration && setTimer === 0) {
-          startSetTimer(ex.duration);
-        }
-      }
     }
   };
 
@@ -188,8 +179,6 @@ export default function RoutineStartPage() {
 
     setIntervalRef.current = window.setInterval(() => {
       setSetTimer((prev) => {
-        // якщо workout не запущений — не зменшуємо (безпечно)
-        if (!isWorkoutRunning) return prev;
         // don't trigger completion while a completion is already in progress
         if (completingRef.current) return prev;
         if (prev <= 1) {
