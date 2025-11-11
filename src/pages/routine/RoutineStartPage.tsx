@@ -1,34 +1,47 @@
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 // import navRoutes from "./../../router/index";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 import { Box, Button, CardMedia, LinearProgress, Typography } from "@mui/material";
+import { List, ListItem, ListItemContent, Chip } from "@mui/joy";
 import { getRoutine } from "../../api/routineApi";
 import { addStatistics } from "../../api/statisticApi";
 
 export default function RoutineStartPage() {
   const navigate = useNavigate();
-  const [routine, setRoutine] = useState(null);
-  const params = useParams();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [routine, setRoutine] = useState<any | null>(null);
+  const params = useParams<{ id?: string }>();
 
   // Стан для послідовного виконання
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [currentSetIndex, setCurrentSetIndex] = useState(0);
-  const [isResting, setIsResting] = useState(false);
 
   // Таймери
   const [setTimer, setSetTimer] = useState(0); // Таймер для сету (якщо duration)
-  const [restTimer, setRestTimer] = useState(0);
 
   // Окремі refs для інтервалів
   const workoutIntervalRef = useRef<number | null>(null);
   const setIntervalRef = useRef<number | null>(null);
-  const restIntervalRef = useRef<number | null>(null);
+
+  // Список виконаних сетів/вправ
+  const [completed, setCompleted] = useState<
+    {
+      exerciseId: number;
+      title: string;
+      setNumber: number;
+      reps?: number | null;
+      duration?: number | null;
+      at: string;
+    }[]
+  >([]);
+  const [isCompletingState, setIsCompletingState] = useState(false);
 
   // Refs для індексів, щоб уникнути stale closures
   const currentExerciseIndexRef = useRef<number>(currentExerciseIndex);
   const currentSetIndexRef = useRef<number>(currentSetIndex);
+  // guard to avoid re-entrant completeSet calls
+  const completingRef = useRef<boolean>(false);
 
   useEffect(() => {
     currentExerciseIndexRef.current = currentExerciseIndex;
@@ -37,27 +50,32 @@ export default function RoutineStartPage() {
     currentSetIndexRef.current = currentSetIndex;
   }, [currentSetIndex]);
 
-  async function getData() {
-    try {
-      const data = await getRoutine(params.id);
-      setRoutine(data.data.data);
+  // load routine when param id changes
+  useEffect(() => {
+    const load = async () => {
+      try {
+        if (!params.id) return;
+        const data = await getRoutine(Number(params.id));
+        setRoutine(data.data.data);
 
-      // Відновлення прогресу з localStorage
-      const savedExercise = localStorage.getItem("currentExerciseIndex");
-      const savedSet = localStorage.getItem("currentSetIndex");
-      if (savedExercise) {
-        setCurrentExerciseIndex(Number(savedExercise));
-        currentExerciseIndexRef.current = Number(savedExercise);
+        // Відновлення прогресу з localStorage
+        const savedExercise = localStorage.getItem("currentExerciseIndex");
+        const savedSet = localStorage.getItem("currentSetIndex");
+        if (savedExercise) {
+          setCurrentExerciseIndex(Number(savedExercise));
+          currentExerciseIndexRef.current = Number(savedExercise);
+        }
+        if (savedSet) {
+          setCurrentSetIndex(Number(savedSet));
+          currentSetIndexRef.current = Number(savedSet);
+        }
+      } catch (error) {
+        toast.error("Сталася помилка, детльніше в консолі");
+        console.log(error);
       }
-      if (savedSet) {
-        setCurrentSetIndex(Number(savedSet));
-        currentSetIndexRef.current = Number(savedSet);
-      }
-    } catch (error) {
-      toast.error("Сталася помилка, детльніше в консолі");
-      console.log(error);
-    }
-  }
+    };
+    load();
+  }, [params.id]);
 
   function StartRoutine() {
     if (routine) {
@@ -65,7 +83,7 @@ export default function RoutineStartPage() {
       // Якщо є duration у поточній вправі — стартувати її таймер відразу
       const ex = routine?.exercises?.[currentExerciseIndexRef.current];
       if (ex) {
-        if (ex.duration && setTimer === 0 && !isResting) {
+        if (ex.duration && setTimer === 0) {
           startSetTimer(ex.duration);
         }
       }
@@ -77,11 +95,11 @@ export default function RoutineStartPage() {
     const endtime = new Date().toISOString();
     pauseWorkoutTimer();
     clearSetInterval();
-    clearRestInterval();
 
     const musclesParse = () => {
       const m: string[] = [];
-      routine?.exercises.forEach((item) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      routine?.exercises.forEach((item: any) => {
         // console.log("item", item);
         for (let index = 0; index < (item.exercise?.muscles || []).length; index++) {
           m.push(item.exercise.muscles[index].muscle.name);
@@ -130,14 +148,12 @@ export default function RoutineStartPage() {
       }, 1000);
 
       // при відновленні — якщо є активний set/rest, відновити їх
-      if (isResting && restTimer > 0) {
-        startRestTimer(restTimer);
-      } else if (!isResting && setTimer > 0) {
+      if (setTimer > 0) {
         startSetTimer(setTimer);
       } else {
         // стартувати таймер поточної вправи якщо вимагається
         const ex = routine?.exercises?.[currentExerciseIndexRef.current];
-        if (ex?.duration && setTimer === 0 && !isResting) {
+        if (ex?.duration && setTimer === 0) {
           startSetTimer(ex.duration);
         }
       }
@@ -153,7 +169,6 @@ export default function RoutineStartPage() {
 
     // при паузі зупинити таймери сету/відпочинку але зберегти залишок
     clearSetInterval();
-    clearRestInterval();
   };
 
   // допоміжні clear
@@ -163,17 +178,10 @@ export default function RoutineStartPage() {
       setIntervalRef.current = null;
     }
   };
-  const clearRestInterval = () => {
-    if (restIntervalRef.current) {
-      clearInterval(restIntervalRef.current);
-      restIntervalRef.current = null;
-    }
-  };
 
   // Функція для запуску таймера сету (якщо duration)
   const startSetTimer = (duration: number) => {
     clearSetInterval();
-    setIsResting(false);
     const start = duration ?? setTimer;
     setSetTimer(start);
     if (start <= 0) return;
@@ -182,6 +190,8 @@ export default function RoutineStartPage() {
       setSetTimer((prev) => {
         // якщо workout не запущений — не зменшуємо (безпечно)
         if (!isWorkoutRunning) return prev;
+        // don't trigger completion while a completion is already in progress
+        if (completingRef.current) return prev;
         if (prev <= 1) {
           clearSetInterval();
           completeSet();
@@ -192,41 +202,49 @@ export default function RoutineStartPage() {
     }, 1000);
   };
 
-  // Функція для запуску таймера відпочинку
-  const startRestTimer = (rest: number) => {
-    clearRestInterval();
-    setIsResting(true);
-    const start = rest ?? restTimer;
-    setRestTimer(start);
-    if (start <= 0) {
-      setIsResting(false);
-      nextSet();
-      return;
-    }
-    restIntervalRef.current = window.setInterval(() => {
-      setRestTimer((prev) => {
-        if (!isWorkoutRunning) return prev;
-        if (prev <= 1) {
-          clearRestInterval();
-          setIsResting(false);
-          nextSet();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
   // Завершити сет вручну або автоматично
   const completeSet = () => {
+    // prevent re-entrance (multiple clicks or overlapping timers)
+    if (completingRef.current) return;
+    completingRef.current = true;
+    setIsCompletingState(true);
+
+    // clear any running set interval first to avoid duplicate completions
+    clearSetInterval();
     const ex = routine?.exercises?.[currentExerciseIndexRef.current];
     if (!ex) return;
-    // після завершення сету запустити відпочинок (якщо є), інакше перейти
-    if (ex.rest && ex.rest > 0) {
-      startRestTimer(ex.rest);
-    } else {
-      nextSet();
+    // записуємо, що сет виконано
+    try {
+      // reset visible set timer immediately
+      setSetTimer(0);
+
+      const item = {
+        exerciseId: ex.exercise.id,
+        title: ex.exercise.title,
+        setNumber: currentSetIndexRef.current + 1,
+        reps: ex.reps ?? null,
+        duration: ex.duration ?? null,
+        at: new Date().toISOString(),
+      };
+
+      setCompleted((prev) => {
+        // dedupe: if same exercise+set already present, skip adding
+        const exists = prev.some((p) => p.exerciseId === item.exerciseId && p.setNumber === item.setNumber);
+        if (exists) return prev;
+        return [item, ...prev];
+      });
+    } catch (err) {
+      console.log(err);
     }
+
+    // після завершення сету — одразу перейти до наступного сету (без відпочинку)
+    nextSet();
+
+    // allow next completeSet calls (small delay to avoid immediate re-entrance)
+    setTimeout(() => {
+      completingRef.current = false;
+      setIsCompletingState(false);
+    }, 300);
   };
 
   // Перейти до наступного сету
@@ -244,7 +262,8 @@ export default function RoutineStartPage() {
       currentSetIndexRef.current = newSet;
       localStorage.setItem("currentSetIndex", String(newSet));
 
-      // стартувати timer для сету, якщо duration заданий
+      // reset set timer and стартувати timer для сету, якщо duration заданий
+      setSetTimer(0);
       if (currentEx.duration) {
         startSetTimer(currentEx.duration);
       }
@@ -257,7 +276,6 @@ export default function RoutineStartPage() {
   // Перейти до наступної вправи
   const nextExercise = () => {
     clearSetInterval();
-    clearRestInterval();
     const exIndex = currentExerciseIndexRef.current;
     if (exIndex < (routine?.exercises?.length ?? 0) - 1) {
       const newEx = exIndex + 1;
@@ -284,13 +302,7 @@ export default function RoutineStartPage() {
     return () => {
       if (workoutIntervalRef.current) clearInterval(workoutIntervalRef.current);
       clearSetInterval();
-      clearRestInterval();
     };
-  }, []);
-
-  useEffect(() => {
-    getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   //Ініціація рутини
   useEffect(() => {
@@ -318,41 +330,73 @@ export default function RoutineStartPage() {
       </Box>
 
       {currentExercise && (
-        <Box>
-          <Typography variant="h5">
-            {currentExercise.exercise.title} (Сет {currentSetIndex + 1})
-          </Typography>
-          <LinearProgress variant="determinate" value={progress} />
-          <CardMedia
-            component="img"
-            sx={{ width: 100, height: 100 }}
-            image={`http://localhost:6189${JSON.parse(currentExercise.exercise.images)[0]}`}
-            alt="image"
-          />
-          {currentExercise.reps !== null && currentExercise.reps !== undefined && (
-            <span>Повторів: {currentExercise.reps}</span>
-          )}
-          {currentExercise.duration && <span>Час: {setTimer} сек</span>}
-          {isResting && <Typography>Відпочинок: {restTimer} сек</Typography>}
-          <Button onClick={completeSet} variant="contained">
-            Завершити сет
-          </Button>
-          <Button
-            onClick={() => {
-              // кнопка Пропустити вправу
-              clearSetInterval();
-              clearRestInterval();
-              nextExercise();
-            }}
-            sx={{ ml: 1 }}
-            variant="outlined"
-          >
-            Пропустити вправу
-          </Button>
+        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 2, mt: 2 }}>
+          <Box>
+            <Typography variant="h5">
+              {currentExercise.exercise.title} (Сет {currentSetIndex + 1})
+            </Typography>
+            <LinearProgress variant="determinate" value={progress} sx={{ my: 1 }} />
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 1 }}>
+              <CardMedia
+                component="img"
+                sx={{ width: 100, height: 100 }}
+                image={`http://localhost:6189${JSON.parse(currentExercise.exercise.images)[0]}`}
+                alt="image"
+              />
+              <Box>
+                {currentExercise.reps !== null && currentExercise.reps !== undefined && (
+                  <Typography>Повторів: {currentExercise.reps}</Typography>
+                )}
+                {currentExercise.duration && <Typography>Час: {setTimer} сек</Typography>}
+              </Box>
+            </Box>
+
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button onClick={completeSet} variant="contained" disabled={isCompletingState}>
+                Завершити сет
+              </Button>
+              <Button
+                onClick={() => {
+                  // кнопка Пропустити вправу
+                  clearSetInterval();
+                  nextExercise();
+                }}
+                sx={{ ml: 1 }}
+                variant="outlined"
+              >
+                Пропустити вправу
+              </Button>
+            </Box>
+          </Box>
+
+          <Box>
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              Виконані вправи
+            </Typography>
+            {completed.length === 0 ? (
+              <Typography variant="body2">Поки що нічого не виконано</Typography>
+            ) : (
+              <List size="sm">
+                {completed.map((c, i) => (
+                  <ListItem key={`${c.exerciseId}-${i}`}>
+                    <ListItemContent>
+                      <Typography>{c.title}</Typography>
+                      <Typography variant="body2">
+                        Сет {c.setNumber} • {new Date(c.at).toLocaleTimeString()}
+                      </Typography>
+                    </ListItemContent>
+                    <Chip size="sm" color="primary" variant="soft">
+                      {c.reps ? `${c.reps} reps` : c.duration ? `${c.duration}s` : "—"}
+                    </Chip>
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </Box>
         </Box>
       )}
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
         <Button onClick={EndRoutine} variant="contained">
           Завершити тренування
         </Button>
