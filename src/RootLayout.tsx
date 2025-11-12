@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Typography, Sheet } from "@mui/joy";
 import { NavLink, Outlet } from "react-router";
 import navRoutes from "./router/index";
 import { ToastContainer } from "react-toastify";
@@ -29,62 +29,69 @@ const navItems = [
 
 export default function RootLayout() {
   return (
-    <Grid container sx={{ height: "100vh" }}>
-      {/* <SideBar /> */}
-      <Grid size={2}>
-        <Box sx={{ display: "grid", boxSizing: "border-box", p: "15px" }}>
-          {navItems.map(({ path, label, icon }) => (
-            <NavLink
-              key={path}
-              to={path}
-              style={({ isActive }) => ({
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 14px",
-                borderRadius: "8px",
-                fontWeight: isActive ? 600 : 400,
-                color: isActive ? "#60a5fa" : "#000000ff",
-                backgroundColor: isActive
-                  ? "rgba(96,165,250,0.2)"
-                  : "transparent",
-                textDecoration: "none",
-                transition: "all 0.2s ease-in-out",
-                boxShadow: isActive ? "0 0 8px rgba(96,165,250,0.5)" : "none",
-              })}
-            >
-              <Typography variant="body1">{icon}</Typography>
-              <Typography variant="body1">{label}</Typography>
-            </NavLink>
-          ))}
-        </Box>
-      </Grid>
-      <Grid
-        container
-        size="grow"
+    <Box sx={{ display: "flex", height: "100vh" }}>
+      {/* Sidebar */}
+      <Sheet
+        variant="soft"
         sx={{
-          padding: "15px",
-          height: "100%",
-          width: "100%",
-          overflow: "hidden",
-          overflowY: "auto",
+          width: 240,
+          p: 2,
+          borderRight: "1px solid",
+          borderColor: "divider",
+          display: "flex",
+          flexDirection: "column",
+          gap: 0.5,
         }}
       >
-        <Box
+        {navItems.map(({ path, label, icon }) => (
+          <NavLink
+            key={path}
+            to={path}
+            style={({ isActive }) => ({
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              padding: "12px 16px",
+              borderRadius: "8px",
+              fontWeight: isActive ? 600 : 400,
+              color: isActive ? "var(--joy-palette-primary-500)" : "var(--joy-palette-text-primary)",
+              backgroundColor: isActive ? "rgba(96,165,250,0.2)" : "transparent",
+              textDecoration: "none",
+              transition: "all 0.2s ease-in-out",
+              boxShadow: isActive ? "0 0 0 2px var(--joy-palette-primary-200)" : "none",
+            })}
+          >
+            <Typography level="body-md">{icon}</Typography>
+            <Typography level="body-md">{label}</Typography>
+          </NavLink>
+        ))}
+      </Sheet>
+
+      {/* Main Content */}
+      <Box
+        sx={{
+          flex: 1,
+          p: 3,
+          overflow: "hidden",
+          backgroundColor: "background.body",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Sheet
+          variant="outlined"
           sx={{
-            // padding: "5px",
-            padding: "15px",
-            height: "100%",
-            width: "100%",
-            backgroundColor: "rgba(255, 255, 255, 0)",
-            borderRadius: "15px",
-            boxSizing: "border-box",
+            p: 3,
+            flex: 1,
+            borderRadius: "lg",
+            backgroundColor: "background.surface",
+            overflow: "auto",
           }}
         >
           <Outlet />
-        </Box>
-      </Grid>
+        </Sheet>
+      </Box>
       <ToastContainer />
-    </Grid>
+    </Box>
   );
 }

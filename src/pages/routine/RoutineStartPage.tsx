@@ -1,9 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-// import navRoutes from "./../../router/index";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
-import { Box, Button, CardMedia, LinearProgress, Typography } from "@mui/material";
-import { List, ListItem, ListItemContent, Chip } from "@mui/joy";
+import {
+  Box,
+  Button,
+  Typography,
+  LinearProgress,
+  Stack,
+  Card,
+  AspectRatio,
+  List,
+  ListItem,
+  ListItemContent,
+  Chip,
+  IconButton,
+} from "@mui/joy";
 import { getRoutine } from "../../api/routineApi";
 import { addStatistics } from "../../api/statisticApi";
 
@@ -343,79 +354,84 @@ export default function RoutineStartPage() {
   const currentExercise = routine?.exercises?.[currentExerciseIndex];
   const progress = currentExercise ? ((currentSetIndex + 1) / (currentExercise.sets || 1)) * 100 : 0;
   return (
-    <div>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography>{routine?.title}</Typography>
-        <Box>
-          <Typography>Time: {formatTime(workoutSeconds)}</Typography>
-          <button onClick={isWorkoutRunning ? pauseWorkoutTimer : startWorkoutTimer}>
+    <Box>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+        <Typography level="h2">{routine?.title}</Typography>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Typography level="h4">{formatTime(workoutSeconds)}</Typography>
+          <IconButton
+            variant="soft"
+            color={isWorkoutRunning ? "warning" : "success"}
+            onClick={isWorkoutRunning ? pauseWorkoutTimer : startWorkoutTimer}
+            size="lg"
+          >
             {isWorkoutRunning ? "⏸" : "▶"}
-          </button>
-        </Box>
-      </Box>
+          </IconButton>
+        </Stack>
+      </Stack>
 
       {currentExercise && (
-        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 2, mt: 2 }}>
-          <Box>
-            <Typography variant="h5">
+        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 3 }}>
+          <Card variant="outlined" sx={{ p: 3 }}>
+            <Typography level="h3" sx={{ mb: 1 }}>
               {currentExercise.exercise.title} (Сет {currentSetIndex + 1})
             </Typography>
-            <LinearProgress variant="determinate" value={progress} sx={{ my: 1 }} />
-            <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 1 }}>
-              <CardMedia
-                component="img"
-                sx={{ width: 100, height: 100 }}
-                image={`http://localhost:6189${JSON.parse(currentExercise.exercise.images)[0]}`}
-                alt="image"
-              />
+            <LinearProgress determinate value={progress} sx={{ mb: 2 }} />
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 3 }}>
+              <AspectRatio ratio="1" sx={{ width: 120 }}>
+                <img
+                  src={`http://localhost:6189${JSON.parse(currentExercise.exercise.images)[0]}`}
+                  alt="exercise"
+                  style={{ objectFit: "cover" }}
+                />
+              </AspectRatio>
               <Box>
                 {isPreparing ? (
-                  <Typography variant="h4" color="primary">
+                  <Typography level="h3" color="primary">
                     Підготовка: {prepTimer} сек
                   </Typography>
                 ) : (
-                  <>
+                  <Stack spacing={1}>
                     {currentExercise.reps !== null && currentExercise.reps !== undefined && (
-                      <Typography>Повторів: {currentExercise.reps}</Typography>
+                      <Typography level="body-lg">Повторів: {currentExercise.reps}</Typography>
                     )}
-                    {currentExercise.duration && <Typography>Час: {setTimer} сек</Typography>}
-                  </>
+                    {currentExercise.duration && <Typography level="body-lg">Час: {setTimer} сек</Typography>}
+                  </Stack>
                 )}
               </Box>
             </Box>
 
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Button onClick={completeSet} variant="contained" disabled={isCompletingState || isPreparing}>
+            <Stack direction="row" spacing={1}>
+              <Button onClick={completeSet} color="primary" size="lg" disabled={isCompletingState || isPreparing}>
                 Завершити сет
               </Button>
               <Button
                 onClick={() => {
-                  // кнопка Пропустити вправу
                   clearSetInterval();
                   clearPrepInterval();
                   nextExercise();
                 }}
-                sx={{ ml: 1 }}
                 variant="outlined"
+                size="lg"
               >
                 Пропустити вправу
               </Button>
-            </Box>
-          </Box>
+            </Stack>
+          </Card>
 
-          <Box>
-            <Typography variant="h6" sx={{ mb: 1 }}>
+          <Card variant="outlined" sx={{ p: 2 }}>
+            <Typography level="h4" sx={{ mb: 2 }}>
               Виконані вправи
             </Typography>
             {completed.length === 0 ? (
-              <Typography variant="body2">Поки що нічого не виконано</Typography>
+              <Typography level="body-sm">Поки що нічого не виконано</Typography>
             ) : (
               <List size="sm">
                 {completed.map((c, i) => (
                   <ListItem key={`${c.exerciseId}-${i}`}>
                     <ListItemContent>
-                      <Typography>{c.title}</Typography>
-                      <Typography variant="body2">
+                      <Typography level="body-md">{c.title}</Typography>
+                      <Typography level="body-sm">
                         Сет {c.setNumber} • {new Date(c.at).toLocaleTimeString()}
                       </Typography>
                     </ListItemContent>
@@ -426,15 +442,15 @@ export default function RoutineStartPage() {
                 ))}
               </List>
             )}
-          </Box>
+          </Card>
         </Box>
       )}
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-        <Button onClick={EndRoutine} variant="contained">
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
+        <Button onClick={EndRoutine} color="primary" size="lg">
           Завершити тренування
         </Button>
       </Box>
-    </div>
+    </Box>
   );
 }
