@@ -71,7 +71,7 @@ export default function CreateExercisePage() {
 
   return (
     <Box display="flex" p={2}>
-      <Card sx={{ width: "100%", maxWidth: 1000, borderRadius: 3, boxShadow: 1 }}>
+      <Card sx={{ width: "100%", maxWidth: 1000, border: "none" }}>
         <CardContent>
           <Typography level="h2" sx={{ mb: 3 }}>
             Додати вправу
