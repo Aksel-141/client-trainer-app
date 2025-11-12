@@ -12,6 +12,7 @@ type Exercise = {
   title: string;
   description: string;
   images: string[];
+  muscles: string[];
 };
 
 export default function ExerciseListPage() {
@@ -70,7 +71,7 @@ export default function ExerciseListPage() {
                     {e?.description}
                   </Typography>
                   <Typography> М'язи які задіяні:</Typography>
-                  {e?.muscles.map((m, index) => (
+                  {e?.muscles.map((m: string, index: number) => (
                     <Typography
                       key={index}
                       variant="body2"

@@ -5,7 +5,8 @@ import { deleteRoutine, getRoutineAll } from "../../api/routineApi";
 import { toast } from "react-toastify";
 
 export default function RoutineListPage() {
-  const [routines, setroutines] = useState<[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [routines, setroutines] = useState<any[]>([]);
 
   async function getData() {
     try {
@@ -48,18 +49,20 @@ export default function RoutineListPage() {
               <h2>{routine.title}</h2>
               {routine.description && <p>{routine.description}</p>}
               <ul>
+                {/* eslint-disable @typescript-eslint/no-explicit-any */}
                 {routine?.exercises
-                  .sort((a, b) => a.order - b.order) // щоб порядок був правильний
-                  .map((re) => (
+                  .sort((a: any, b: any) => a.order - b.order) // щоб порядок був правильний
+                  .map((re: any) => (
                     <li key={re.id} style={{ marginBottom: "1rem" }}>
                       <strong>{re.exercise.title}</strong> - {re.reps ? `${re.reps} reps` : ""}
                       {re.sets ? ` x ${re.sets} sets` : ""}
                       {re.duration ? ` | ${re.duration}s` : ""}
                       {re.rest ? ` | rest ${re.rest}s` : ""}
                       <br />
-                      <em>М’язи: {re.exercise.muscles.map((m) => m.muscle.name).join(", ")}</em>
+                      <em>М'язи: {re.exercise.muscles.map((m: any) => m.muscle.name).join(", ")}</em>
                     </li>
                   ))}
+                {/* eslint-enable @typescript-eslint/no-explicit-any */}
               </ul>
             </Box>
             <Box>

@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Card, CardContent, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import navRoutes from "./../../router/index";
@@ -58,7 +51,8 @@ export default function CreateExercisePage() {
   };
 
   // ------
-  const [muscleByGroup, setMuscleByGroup] = useState([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [muscleByGroup, setMuscleByGroup] = useState<any[]>([]);
   async function getBaseData() {
     try {
       const mbg = await getMuscleByGroup();
@@ -77,9 +71,7 @@ export default function CreateExercisePage() {
 
   return (
     <Box display="flex" p={2}>
-      <Card
-        sx={{ width: "100%", maxWidth: 1000, borderRadius: 3, boxShadow: 1 }}
-      >
+      <Card sx={{ width: "100%", maxWidth: 1000, borderRadius: 3, boxShadow: 1 }}>
         <CardContent>
           <Typography variant="h5" mb={2} sx={{ mb: 2 }}>
             Додати вправу
@@ -108,13 +100,7 @@ export default function CreateExercisePage() {
               //   startIcon={<AddPhotoAlternate />}
             >
               Завантажити фото
-              <input
-                hidden
-                multiple
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
+              <input hidden multiple type="file" accept="image/*" onChange={handleImageUpload} />
             </Button>
             <Button
               variant="outlined"
@@ -122,12 +108,7 @@ export default function CreateExercisePage() {
               //   startIcon={<VideoLibrary />}
             >
               Завантажити відео
-              <input
-                hidden
-                type="file"
-                accept="video/*"
-                onChange={handleVideoUpload}
-              />
+              <input hidden type="file" accept="video/*" onChange={handleVideoUpload} />
             </Button>
           </Box>
 
@@ -151,13 +132,7 @@ export default function CreateExercisePage() {
           {video && (
             <Box mb={2}>
               <Typography variant="subtitle1">Відео:</Typography>
-              <video
-                src={URL.createObjectURL(video)}
-                width="100%"
-                height="240"
-                controls
-                style={{ borderRadius: 8 }}
-              />
+              <video src={URL.createObjectURL(video)} width="100%" height="240" controls style={{ borderRadius: 8 }} />
             </Box>
           )}
 
@@ -165,15 +140,11 @@ export default function CreateExercisePage() {
             {muscleByGroup.map((item, index) => (
               <div key={index}>
                 <h3>{item.nameUa}</h3>
-                {item.muscles.map((item) => (
-                  <label key={item.id}>
-                    <input
-                      type="checkbox"
-                      name="muscles"
-                      value={item.nameEn}
-                      onChange={onChangeMuscles}
-                    />
-                    {item.nameUa}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {item.muscles.map((muscle: any) => (
+                  <label key={muscle.id}>
+                    <input type="checkbox" name="muscles" value={muscle.nameEn} onChange={onChangeMuscles} />
+                    {muscle.nameUa}
                   </label>
                 ))}
               </div>

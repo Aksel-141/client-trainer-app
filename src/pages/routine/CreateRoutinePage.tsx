@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import navRoutes from "../../router";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { getRoutineAll } from "./../../api/routineApi";
 
 type Exercise = {
   id: number;
@@ -14,7 +13,6 @@ type Exercise = {
 };
 type RoutineExerciseInput = {
   exerciseId: number;
-  title: string;
   reps?: number;
   sets?: number;
   duration?: number;

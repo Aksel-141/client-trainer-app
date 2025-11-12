@@ -21,12 +21,11 @@ import {
 import { EditOutlined } from "@mui/icons-material";
 
 export default function ViewOrEditSingleExercisePage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [currExercise, setCurrExercise] = useState<any>(null);
   const [title, setTitle] = useState(currExercise?.title || "");
   const [description, setDescription] = useState(currExercise?.description || "");
-  const [images, setImages] = useState<File[]>(currExercise?.images || []);
   const [newImages, setNewImages] = useState<File[]>([]);
-  const [video, setVideo] = useState<File | null>(currExercise?.video || null);
   const [newVideo, setNewVideo] = useState<File | null>(currExercise?.video || null);
   const [muscles, setMuscles] = useState<string[]>(currExercise?.muscles || []);
   const params = useParams();
@@ -66,6 +65,7 @@ export default function ViewOrEditSingleExercisePage() {
 
   useEffect(() => {
     getExersice();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -160,6 +160,7 @@ export default function ViewOrEditSingleExercisePage() {
                 gap: 1,
               }}
             >
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {currExercise.musclesInfo?.map((m: any, i: number) => (
                 <Chip key={i} variant="soft" color="primary">
                   {m.nameUa}
@@ -186,13 +187,14 @@ export default function ViewOrEditSingleExercisePage() {
       {/* Фото */}
       <Box sx={{ mb: 4 }}>
         <FormLabel>Галерея</FormLabel>
-        <input
-          multiple
-          type="file"
-          accept="image/*"
-          onChange={(e) => setNewImages(Array.from(e.target.files || []))}
-          sx={{ mt: 1 }}
-        />
+        <Box sx={{ mt: 1 }}>
+          <input
+            multiple
+            type="file"
+            accept="image/*"
+            onChange={(e) => setNewImages(Array.from(e.target.files || []))}
+          />
+        </Box>
         <Box
           sx={{
             mt: 1,
