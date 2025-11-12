@@ -83,8 +83,10 @@ export default function RootLayout() {
           sx={{
             p: 3,
             flex: 1,
-            borderRadius: "lg",
-            backgroundColor: "background.surface",
+            border: "none",
+            // borderRadius: "lg",
+            // backgroundColor: "background.surface",
+            backgroundColor: "transparent",
             overflow: "auto",
           }}
         >
