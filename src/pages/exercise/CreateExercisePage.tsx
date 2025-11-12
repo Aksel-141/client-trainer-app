@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Input, Textarea, Typography, Checkbox, Sheet, Stack } from "@mui/joy";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import navRoutes from "./../../router/index";
@@ -73,87 +73,98 @@ export default function CreateExercisePage() {
     <Box display="flex" p={2}>
       <Card sx={{ width: "100%", maxWidth: 1000, borderRadius: 3, boxShadow: 1 }}>
         <CardContent>
-          <Typography variant="h5" mb={2} sx={{ mb: 2 }}>
+          <Typography level="h2" sx={{ mb: 3 }}>
             Додати вправу
           </Typography>
-          <TextField
-            label="Назва вправи"
-            variant="outlined"
-            fullWidth
-            sx={{ mb: 2 }}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <TextField
-            label="Опис (необов’язково)"
-            variant="outlined"
-            fullWidth
-            multiline
-            rows={3}
-            sx={{ mb: 2 }}
-            onChange={(e) => setDescription(e.target.value)}
-          />
 
-          <Box display={"flex"} gap={2} mb={2}>
-            <Button
-              variant="outlined"
-              component="label"
-              //   startIcon={<AddPhotoAlternate />}
-            >
-              Завантажити фото
-              <input hidden multiple type="file" accept="image/*" onChange={handleImageUpload} />
-            </Button>
-            <Button
-              variant="outlined"
-              component="label"
-              //   startIcon={<VideoLibrary />}
-            >
-              Завантажити відео
-              <input hidden type="file" accept="video/*" onChange={handleVideoUpload} />
-            </Button>
-          </Box>
+          <Stack spacing={2}>
+            <Input placeholder="Назва вправи" value={title} onChange={(e) => setTitle(e.target.value)} size="lg" />
+            <Textarea
+              placeholder="Опис (необов'язково)"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              minRows={3}
+              size="lg"
+            />
 
-          {images?.length > 0 && (
-            <Box mb={2}>
-              <Typography variant="subtitle1">Зображення:</Typography>
-              <Box display="flex" flexWrap="wrap" gap={1}>
-                {images.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={URL.createObjectURL(img)}
-                    alt="exercise"
-                    width={100}
-                    style={{ borderRadius: 8 }}
-                  />
-                ))}
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Button
+                variant="outlined"
+                component="label"
+                //   startIcon={<AddPhotoAlternate />}
+              >
+                Завантажити фото
+                <input hidden multiple type="file" accept="image/*" onChange={handleImageUpload} />
+              </Button>
+              <Button
+                variant="outlined"
+                component="label"
+                //   startIcon={<VideoLibrary />}
+              >
+                Завантажити відео
+                <input hidden type="file" accept="video/*" onChange={handleVideoUpload} />
+              </Button>
+            </Box>
+
+            {images?.length > 0 && (
+              <Box>
+                <Typography level="title-md" sx={{ mb: 1 }}>
+                  Зображення:
+                </Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  {images.map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={URL.createObjectURL(img)}
+                      alt="exercise"
+                      width={100}
+                      style={{ borderRadius: 8 }}
+                    />
+                  ))}
+                </Box>
               </Box>
-            </Box>
-          )}
+            )}
 
-          {video && (
-            <Box mb={2}>
-              <Typography variant="subtitle1">Відео:</Typography>
-              <video src={URL.createObjectURL(video)} width="100%" height="240" controls style={{ borderRadius: 8 }} />
-            </Box>
-          )}
+            {video && (
+              <Box>
+                <Typography level="title-md" sx={{ mb: 1 }}>
+                  Відео:
+                </Typography>
+                <video
+                  src={URL.createObjectURL(video)}
+                  width="100%"
+                  height="240"
+                  controls
+                  style={{ borderRadius: 8 }}
+                />
+              </Box>
+            )}
 
-          <div>
-            {muscleByGroup.map((item, index) => (
-              <div key={index}>
-                <h3>{item.nameUa}</h3>
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {item.muscles.map((muscle: any) => (
-                  <label key={muscle.id}>
-                    <input type="checkbox" name="muscles" value={muscle.nameEn} onChange={onChangeMuscles} />
-                    {muscle.nameUa}
-                  </label>
-                ))}
-              </div>
-            ))}
-          </div>
+            <Sheet sx={{ p: 2, borderRadius: "sm", bgcolor: "background.level1" }}>
+              {muscleByGroup.map((item, index) => (
+                <Box key={index} sx={{ mb: 2 }}>
+                  <Typography level="title-lg" sx={{ mb: 1 }}>
+                    {item.nameUa}
+                  </Typography>
+                  <Stack spacing={1}>
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {item.muscles.map((muscle: any) => (
+                      <Checkbox
+                        key={muscle.id}
+                        label={muscle.nameUa}
+                        value={muscle.nameEn}
+                        onChange={onChangeMuscles}
+                      />
+                    ))}
+                  </Stack>
+                </Box>
+              ))}
+            </Sheet>
 
-          <Button variant="contained" fullWidth onClick={handleSave}>
-            Зберегти вправу
-          </Button>
+            <Button variant="solid" fullWidth onClick={handleSave} size="lg">
+              Зберегти вправу
+            </Button>
+          </Stack>
         </CardContent>
       </Card>
 
