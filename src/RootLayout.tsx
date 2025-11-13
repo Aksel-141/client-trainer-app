@@ -34,8 +34,8 @@ export default function RootLayout() {
       <Sheet
         variant="soft"
         sx={{
-          width: 190,
-          p: 2,
+          width: 180,
+          p: 1.5,
           borderRight: "1px solid",
           borderColor: "divider",
           display: "flex",
@@ -50,8 +50,8 @@ export default function RootLayout() {
             style={({ isActive }) => ({
               display: "flex",
               alignItems: "center",
-              gap: "10px",
-              padding: "12px 16px",
+              gap: "8px",
+              padding: "8px 12px",
               borderRadius: "8px",
               fontWeight: isActive ? 600 : 400,
               color: isActive ? "var(--joy-palette-primary-500)" : "var(--joy-palette-text-primary)",
@@ -61,8 +61,8 @@ export default function RootLayout() {
               boxShadow: isActive ? "0 0 0 2px var(--joy-palette-primary-200)" : "none",
             })}
           >
-            <Typography level="body-md">{icon}</Typography>
-            <Typography level="body-md" fontSize={14}>
+            <Typography level="body-sm">{icon}</Typography>
+            <Typography level="body-sm" fontSize={14}>
               {label}
             </Typography>
           </NavLink>

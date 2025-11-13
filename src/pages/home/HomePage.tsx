@@ -70,11 +70,18 @@ export default function HomePage() {
     return `${mins}хв`;
   };
 
+  function formatSecondsToMinutes(seconds: number) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    console.log(date, now, diffDays, diffTime);
 
     if (diffDays === 0) return "Сьогодні";
     if (diffDays === 1) return "Вчора";
@@ -107,69 +114,85 @@ export default function HomePage() {
   }
 
   return (
-    <Box sx={{ width: "100%", height: "100%" }}>
-      <Typography level="h2" sx={{ mb: 3 }}>
+    <Box sx={{ width: "100%", height: "100%", overflow: "hidden" }}>
+      <Typography level="h3" sx={{ mb: 2 }}>
         Вітаннячка! Потренуймося!
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         {/* Ліва частина - основний контент */}
         <Box sx={{ width: "100%", paddingRight: "15px" }}>
-          <Box>
-            {/* ---- ВЕРХНІЙ РЯДОК */}
-            <Box
-              sx={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box", paddingBottom: "15px" }}
-            >
-              {/* Статистика за тиждень */}
-              <Box sx={{ width: "200px" }}>
-                <Card variant="outlined" sx={{ height: "100%", boxSizing: "border-box" }}>
-                  <CardContent>
-                    <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
-                      Тренувань цього тижня
-                    </Typography>
-                    <Typography level="h1" sx={{ color: "primary.500" }}>
-                      {summary?.weekWorkouts || 0}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Box>
-
-              {/* Загальна статистика */}
-              <Box sx={{ width: "200px" }}>
-                <Card variant="outlined" sx={{ height: "100%", boxSizing: "border-box" }}>
-                  <CardContent>
-                    <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
-                      Всього тренувань
-                    </Typography>
-                    <Typography level="h1" sx={{ color: "success.500" }}>
-                      {summary?.totalWorkouts || 0}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Box>
-
-              {/* Загальний час */}
-              <Box sx={{ width: "200px" }}>
-                <Card variant="outlined" sx={{ height: "100%", boxSizing: "border-box" }}>
-                  <CardContent>
-                    <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
-                      Загальний час
-                    </Typography>
-                    <Typography level="h1" sx={{ color: "warning.500" }}>
-                      {summary?.totalTime ? formatTime(summary.totalTime) : "0хв"}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Box>
+          {/* ---- ВЕРХНІЙ РЯДОК */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              boxSizing: "border-box",
+              gap: 1.5,
+              paddingBottom: 2,
+            }}
+          >
+            {/* Статистика за тиждень */}
+            <Box sx={{ flex: 1 }}>
+              <Card variant="outlined" sx={{ height: "100%", boxSizing: "border-box" }}>
+                <CardContent>
+                  <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
+                    Тренувань цього тижня
+                  </Typography>
+                  <Typography level="h1" sx={{ color: "primary.500" }}>
+                    {summary?.weekWorkouts || 0}
+                  </Typography>
+                </CardContent>
+              </Card>
             </Box>
-            {/* Кінець блоку статистики верхнього ряду */}
-            {/* ---- ДРУГИЙ РЯДОК */}
+
+            {/* Загальна статистика */}
+            <Box sx={{ flex: 1 }}>
+              <Card variant="outlined" sx={{ height: "100%", boxSizing: "border-box" }}>
+                <CardContent>
+                  <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
+                    Всього тренувань
+                  </Typography>
+                  <Typography level="h1" sx={{ color: "success.500" }}>
+                    {summary?.totalWorkouts || 0}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
+
+            {/* Загальний час */}
+            <Box sx={{ flex: 1 }}>
+              <Card variant="outlined" sx={{ height: "100%", boxSizing: "border-box" }}>
+                <CardContent>
+                  <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
+                    Загальний час
+                  </Typography>
+                  <Typography level="h1" sx={{ color: "warning.500" }}>
+                    {summary?.totalTime ? formatTime(summary.totalTime) : "0хв"}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
+          </Box>
+          {/* Кінець блоку статистики верхнього ряду */}
+
+          {/* ---- ДРУГИЙ РЯДОК */}
+          <Box
+            sx={{
+              display: "flex",
+              height: "400px",
+              gap: 1.5,
+              justifyContent: "space-between",
+              boxSizing: "border-box",
+              paddingBottom: 2,
+            }}
+          >
             {/* М'язи цього тижня */}
             {summary?.weekMuscles && summary.weekMuscles.length > 0 && (
-              <Box sx={{ marginBottom: "15px", display: "flex", justifyContent: "space-between" }}>
-                <Card variant="outlined" sx={{ boxSizing: "border-box", width: "400px" }}>
+              <Box>
+                <Card variant="outlined" sx={{ boxSizing: "border-box", height: "100%" }}>
                   <CardContent>
-                    <Typography level="title-lg" sx={{ mb: 2 }}>
+                    <Typography level="title-md" sx={{ mb: 2 }}>
                       💪 М'язи які тренувалися цього тижня
                     </Typography>
                     <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
@@ -177,53 +200,52 @@ export default function HomePage() {
                     </Box>
                   </CardContent>
                 </Card>
-                {/* Швидкий старт */}
-                <Box>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography level="title-lg" sx={{ mb: 2 }}>
-                        ⚡ Швидкий старт
-                      </Typography>
-                      {routines.length > 0 ? (
-                        <Stack spacing={2}>
-                          {routines.map((routine) => (
-                            <Card key={routine.id} variant="soft">
-                              <CardContent>
-                                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                  <Box>
-                                    <Typography level="title-md">{routine.title}</Typography>
-                                    <Typography level="body-sm" sx={{ color: "text.secondary" }}>
-                                      {routine.exercises.length} вправ
-                                    </Typography>
-                                  </Box>
-                                  <Button size="sm" onClick={() => navigate(`/routine/${routine.id}/start`)}>
-                                    Почати
-                                  </Button>
-                                </Box>
-                              </CardContent>
-                            </Card>
-                          ))}
-                          <Button variant="outlined" fullWidth onClick={() => navigate(navRoutes.routineList.path)}>
-                            Переглянути всі рутини
-                          </Button>
-                        </Stack>
-                      ) : (
-                        <Box sx={{ textAlign: "center", py: 4 }}>
-                          <Typography level="body-md" sx={{ color: "text.secondary", mb: 2 }}>
-                            Ще немає створених рутин
-                          </Typography>
-                          <Button onClick={() => navigate(navRoutes.createRoutine.path)}>Створити першу рутину</Button>
-                        </Box>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Box>
               </Box>
             )}
-
+            {/* Швидкий старт */}
+            <Box sx={{ flex: 1 }}>
+              <Card variant="outlined" sx={{ boxSizing: "border-box", height: "100%" }}>
+                <CardContent>
+                  <Typography level="title-lg" sx={{ mb: 2 }}>
+                    ⚡ Швидкий старт
+                  </Typography>
+                  {routines.length > 0 ? (
+                    <Stack spacing={1.5}>
+                      {routines.map((routine) => (
+                        <Card key={routine.id} variant="soft">
+                          <CardContent>
+                            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              <Box>
+                                <Typography level="title-md">{routine.title}</Typography>
+                                <Typography level="body-sm" sx={{ color: "text.secondary" }}>
+                                  {routine.exercises.length} вправ
+                                </Typography>
+                              </Box>
+                              <Button size="sm" onClick={() => navigate(`/routine/${routine.id}/start`)}>
+                                Почати
+                              </Button>
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      ))}
+                      <Button variant="outlined" fullWidth onClick={() => navigate(navRoutes.routineList.path)}>
+                        Переглянути всі рутини
+                      </Button>
+                    </Stack>
+                  ) : (
+                    <Box sx={{ textAlign: "center", py: 4 }}>
+                      <Typography level="body-md" sx={{ color: "text.secondary", mb: 2 }}>
+                        Ще немає створених рутин
+                      </Typography>
+                      <Button onClick={() => navigate(navRoutes.createRoutine.path)}>Створити першу рутину</Button>
+                    </Box>
+                  )}
+                </CardContent>
+              </Card>
+            </Box>
             {/* Останні тренування */}
             <Box>
-              <Card variant="outlined">
+              <Card variant="outlined" sx={{ boxSizing: "border-box", height: "100%", overflow: "auto" }}>
                 <CardContent>
                   <Typography level="title-lg" sx={{ mb: 2 }}>
                     📅 Останні тренування
@@ -245,7 +267,7 @@ export default function HomePage() {
                                 <Box sx={{ flex: 1 }}>
                                   <Typography level="title-md">{workout.workoutTitle}</Typography>
                                   <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
-                                    {formatDate(workout.endTime)} • {formatTime(workout.workoutTime)}
+                                    {formatDate(workout.endTime)} • {formatSecondsToMinutes(workout.workoutTime)} хв
                                   </Typography>
                                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
                                     {muscles.map((muscle: string, idx: number) => (
@@ -274,6 +296,59 @@ export default function HomePage() {
                       </Button>
                     </Box>
                   )}
+                </CardContent>
+              </Card>
+            </Box>
+          </Box>
+
+          {/* ---- Третій РЯДОК */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              boxSizing: "border-box",
+              gap: 1.5,
+              paddingBottom: 2,
+            }}
+          >
+            {/* Статистика за тиждень */}
+            <Box sx={{ flex: 1 }}>
+              <Card variant="outlined" sx={{ height: "100%", boxSizing: "border-box" }}>
+                <CardContent>
+                  <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
+                    Тренувань цього тижня
+                  </Typography>
+                  <Typography level="h1" sx={{ color: "primary.500" }}>
+                    {summary?.weekWorkouts || 0}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
+
+            {/* Загальна статистика */}
+            <Box sx={{ flex: 1 }}>
+              <Card variant="outlined" sx={{ height: "100%", boxSizing: "border-box" }}>
+                <CardContent>
+                  <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
+                    Всього тренувань
+                  </Typography>
+                  <Typography level="h1" sx={{ color: "success.500" }}>
+                    {summary?.totalWorkouts || 0}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
+
+            {/* Загальний час */}
+            <Box sx={{ flex: 1 }}>
+              <Card variant="outlined" sx={{ height: "100%", boxSizing: "border-box" }}>
+                <CardContent>
+                  <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
+                    Загальний час
+                  </Typography>
+                  <Typography level="h1" sx={{ color: "warning.500" }}>
+                    {summary?.totalTime ? formatTime(summary.totalTime) : "0хв"}
+                  </Typography>
                 </CardContent>
               </Card>
             </Box>
