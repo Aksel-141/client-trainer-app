@@ -34,7 +34,7 @@ export default function RootLayout() {
       <Sheet
         variant="soft"
         sx={{
-          width: 240,
+          width: 190,
           p: 2,
           borderRight: "1px solid",
           borderColor: "divider",
@@ -62,7 +62,9 @@ export default function RootLayout() {
             })}
           >
             <Typography level="body-md">{icon}</Typography>
-            <Typography level="body-md">{label}</Typography>
+            <Typography level="body-md" fontSize={14}>
+              {label}
+            </Typography>
           </NavLink>
         ))}
       </Sheet>
@@ -81,7 +83,7 @@ export default function RootLayout() {
         <Sheet
           variant="outlined"
           sx={{
-            p: 3,
+            // p: 3,
             flex: 1,
             border: "none",
             // borderRadius: "lg",
