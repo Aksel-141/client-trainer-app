@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Typography, Button, Stack, Chip, CircularProgress, Divider } from "@mui/joy";
+import { Box, Card, CardContent, Typography, Button, Stack, CircularProgress, Divider } from "@mui/joy";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -79,9 +79,12 @@ export default function HomePage() {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    console.log(date, now, diffDays, diffTime);
+    // Скидаємо час до початку дня для точного порівняння
+    const dateDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const diffTime = nowDay.getTime() - dateDay.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) return "Сьогодні";
     if (diffDays === 1) return "Вчора";
@@ -253,13 +256,6 @@ export default function HomePage() {
                   {history.length > 0 ? (
                     <Stack spacing={1.5}>
                       {history.slice(0, 5).map((workout) => {
-                        let muscles: string[] = [];
-                        try {
-                          muscles = JSON.parse(workout.muscles);
-                        } catch (e) {
-                          console.error("Error parsing muscles:", e);
-                        }
-
                         return (
                           <Card key={workout.id} variant="soft">
                             <CardContent>
@@ -269,13 +265,13 @@ export default function HomePage() {
                                   <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
                                     {formatDate(workout.endTime)} • {formatSecondsToMinutes(workout.workoutTime)} хв
                                   </Typography>
-                                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
+                                  {/* <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
                                     {muscles.map((muscle: string, idx: number) => (
                                       <Chip key={idx} variant="outlined" size="sm">
                                         {muscle}
                                       </Chip>
                                     ))}
-                                  </Box>
+                                  </Box> */}
                                 </Box>
                               </Box>
                             </CardContent>
