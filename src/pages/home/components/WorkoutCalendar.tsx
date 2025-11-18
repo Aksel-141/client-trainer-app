@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { Box, Typography, IconButton, Select, MenuItem } from "@mui/material";
+import type { SelectChangeEvent } from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import dayjs from "dayjs";
 
-export default function WorkoutCalendar({ workouts }) {
+interface WorkoutCalendarProps {
+  workouts: string[];
+}
+
+export default function WorkoutCalendar({ workouts }: WorkoutCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(dayjs());
 
   const startOfMonth = currentMonth.startOf("month");
@@ -22,13 +27,13 @@ export default function WorkoutCalendar({ workouts }) {
   }
 
   // зміна місяця
-  const handleMonthChange = (offset) => {
+  const handleMonthChange = (offset: number) => {
     setCurrentMonth(currentMonth.add(offset, "month"));
   };
 
   // зміна року
-  const handleYearChange = (event) => {
-    setCurrentMonth(currentMonth.year(event.target.value));
+  const handleYearChange = (event: SelectChangeEvent<number>) => {
+    setCurrentMonth(currentMonth.year(event.target.value as number));
   };
 
   const years = Array.from({ length: 10 }, (_, i) => dayjs().year() - 5 + i); // 5 назад і 5 вперед
@@ -41,20 +46,13 @@ export default function WorkoutCalendar({ workouts }) {
           <ArrowBack />
         </IconButton>
 
-        <Typography sx={{ textAlign: "center" }}>
-          {currentMonth.format("MMMM")}
-        </Typography>
+        <Typography sx={{ textAlign: "center" }}>{currentMonth.format("MMMM")}</Typography>
 
         <IconButton onClick={() => handleMonthChange(1)}>
           <ArrowForward />
         </IconButton>
 
-        <Select
-          value={currentMonth.year()}
-          onChange={handleYearChange}
-          size="small"
-          sx={{ ml: 2 }}
-        >
+        <Select value={currentMonth.year()} onChange={handleYearChange} size="small" sx={{ ml: 2 }}>
           {years.map((year) => (
             <MenuItem key={year} value={year}>
               {year}
@@ -83,9 +81,7 @@ export default function WorkoutCalendar({ workouts }) {
               key={formatted}
               sx={{
                 borderRadius: "8px",
-                backgroundColor: hasWorkout
-                  ? "rgba(0, 200, 0, 0.2)"
-                  : "rgba(255,255,255,0.05)",
+                backgroundColor: hasWorkout ? "rgba(0, 200, 0, 0.2)" : "rgba(255,255,255,0.05)",
                 border: "1px solid rgba(255,255,255,0.1)",
 
                 cursor: "pointer",
