@@ -67,7 +67,7 @@ export default function RoutineListPage() {
                             {re.rest ? ` | rest ${re.rest}s` : ""}
                           </Typography>
                           <Typography level="body-xs" sx={{ color: "text.tertiary" }}>
-                            М'язи: {re.exercise.muscles.map((m: any) => m.muscle.name).join(", ")}
+                            М'язи: {re.exercise.muscles.map((m: any) => m.muscle.nameEn).join(", ")}
                           </Typography>
                         </ListItemContent>
                       </ListItem>

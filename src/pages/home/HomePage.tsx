@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import WorkoutCalendar from "./components/WorkoutCalendar";
 import MuscleVisualizer from "./../../../components/MuscleVisualizer/index";
-import { getStatisticsSummary, getStatisticsAll } from "../../api/statisticApi";
+import { getWorkoutSummary, getWorkoutAll } from "../../api/statisticApi";
 import { getRoutineAll } from "../../api/routineApi";
 import navRoutes from "../../router";
 
@@ -22,10 +22,10 @@ type StatisticsSummary = {
 
 type WorkoutHistory = {
   id: number;
-  workoutTitle: string;
-  workoutTime: number;
+  title: string;
+  totalTime: number;
   endTime: string;
-  muscles: string;
+  muscles: { muscle: { nameEn: string } }[];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,8 +43,8 @@ export default function HomePage() {
       setLoading(true);
 
       const [summaryRes, historyRes, routinesRes] = await Promise.all([
-        getStatisticsSummary(),
-        getStatisticsAll(),
+        getWorkoutSummary(),
+        getWorkoutAll(),
         getRoutineAll(),
       ]);
 
@@ -261,17 +261,10 @@ export default function HomePage() {
                             <CardContent>
                               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                                 <Box sx={{ flex: 1 }}>
-                                  <Typography level="title-md">{workout.workoutTitle}</Typography>
+                                  <Typography level="title-md">{workout.title}</Typography>
                                   <Typography level="body-sm" sx={{ color: "text.secondary", mb: 1 }}>
-                                    {formatDate(workout.endTime)} • {formatSecondsToMinutes(workout.workoutTime)} хв
+                                    {formatDate(workout.endTime)} • {formatSecondsToMinutes(workout.totalTime)} хв
                                   </Typography>
-                                  {/* <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
-                                    {muscles.map((muscle: string, idx: number) => (
-                                      <Chip key={idx} variant="outlined" size="sm">
-                                        {muscle}
-                                      </Chip>
-                                    ))}
-                                  </Box> */}
                                 </Box>
                               </Box>
                             </CardContent>

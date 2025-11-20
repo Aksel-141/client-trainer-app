@@ -16,7 +16,7 @@ import {
   IconButton,
 } from "@mui/joy";
 import { getRoutine } from "../../api/routineApi";
-import { addStatistics } from "../../api/statisticApi";
+import { addWorkout } from "../../api/statisticApi";
 
 export default function RoutineStartPage() {
   const navigate = useNavigate();
@@ -94,6 +94,7 @@ export default function RoutineStartPage() {
   function StartRoutine() {
     if (routine) {
       localStorage.setItem("savedRoutineId", String(routine?.id));
+      localStorage.setItem("workoutStartTime", new Date().toISOString());
       // Спочатку запустити загальний таймер
       startWorkoutTimer();
 
@@ -104,32 +105,67 @@ export default function RoutineStartPage() {
 
   async function EndRoutine() {
     const endtime = new Date().toISOString();
+    const starttime = localStorage.getItem("workoutStartTime") || new Date().toISOString();
     pauseWorkoutTimer();
     clearSetInterval();
 
-    const musclesParse = () => {
-      const m: string[] = [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      routine?.exercises.forEach((item: any) => {
-        // console.log("item", item);
-        for (let index = 0; index < (item.exercise?.muscles || []).length; index++) {
-          m.push(item.exercise.muscles[index].muscle.name);
+    // Збираємо унікальні ID м'язів з фактично виконаних вправ
+    const getMuscleIds = () => {
+      const muscleIds = new Set<number>();
+
+      // Отримуємо унікальні ID виконаних вправ
+      const completedExerciseIds = [...new Set(completed.map((c) => c.exerciseId))];
+
+      // Для кожної виконаної вправи збираємо ID м'язів
+      completedExerciseIds.forEach((exerciseId) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const exerciseData = routine?.exercises.find((ex: any) => ex.exercise.id === exerciseId);
+
+        if (exerciseData?.exercise?.muscles) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          exerciseData.exercise.muscles.forEach((muscleItem: any) => {
+            muscleIds.add(muscleItem.muscle.id);
+          });
         }
       });
-      return [...new Set(m)];
+
+      return Array.from(muscleIds);
     };
 
-    const routineStatistics = {
-      endTime: endtime.toString(),
-      workoutTime: workoutSeconds,
-      workoutTitle: routine?.title,
-      muscles: musclesParse(),
+    // Групуємо completed по вправах
+    const exercisesMap = new Map();
+    completed.forEach((item) => {
+      if (!exercisesMap.has(item.exerciseId)) {
+        exercisesMap.set(item.exerciseId, []);
+      }
+      exercisesMap.get(item.exerciseId).push({
+        setNumber: item.setNumber,
+        reps: item.reps,
+        duration: item.duration,
+        completedAt: item.at,
+      });
+    });
+
+    const exercises = Array.from(exercisesMap.entries()).map(([exerciseId, sets]) => ({
+      exerciseId,
+      sets,
+    }));
+
+    const workoutData = {
+      routineId: routine?.id || null,
+      title: routine?.title || "Тренування",
+      startTime: starttime,
+      endTime: endtime,
+      totalTime: workoutSeconds,
+      exercises,
+      muscles: getMuscleIds(),
     };
 
     try {
-      await addStatistics(routineStatistics);
+      await addWorkout(workoutData);
       localStorage.removeItem("savedRoutineId");
       localStorage.removeItem("savedRoutineTime");
+      localStorage.removeItem("workoutStartTime");
       localStorage.removeItem("currentExerciseIndex");
       localStorage.removeItem("currentSetIndex");
       navigate("/");
@@ -137,8 +173,6 @@ export default function RoutineStartPage() {
       toast.error("Сталася помилка, детльніше в консолі");
       console.log(error);
     }
-
-    console.log(routineStatistics);
   }
 
   // Загальний таймер

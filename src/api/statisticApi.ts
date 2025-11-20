@@ -1,13 +1,13 @@
 import axios from "axios";
 
-export function addStatistics(data: any) {
-  return axios.post("/statistics", data);
+export function addWorkout(data: any) {
+  return axios.post("/workout", data);
 }
 
-export function getStatisticsAll() {
-  return axios.get("/statistics/all");
+export function getWorkoutAll() {
+  return axios.get("/workout");
 }
 
-export function getStatisticsSummary() {
-  return axios.get("/statistics/summary");
+export function getWorkoutSummary() {
+  return axios.get("/workout/summary");
 }
