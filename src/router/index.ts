@@ -20,7 +20,7 @@ const navRoutes = {
     path: "/routine/create",
   },
   routineList: {
-    title: "Список рутин",
+    title: "Список тренувань",
     path: "/routine/all",
   },
   routineStart: {

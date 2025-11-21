@@ -35,7 +35,7 @@ export default function RoutineListPage() {
   return (
     <Box>
       <Typography level="h2" sx={{ mb: 3 }}>
-        Список рутин
+        Список тренувань
       </Typography>
       <Stack spacing={2}>
         {routines.map((routine) => (
