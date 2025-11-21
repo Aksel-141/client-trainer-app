@@ -65,14 +65,33 @@ export default function ExerciseListPage() {
             >
               <Box sx={{ display: "flex", gap: 2 }}>
                 {/* Зображення вправи */}
-                <AspectRatio ratio="1" sx={{ width: 200, minWidth: 200 }}>
-                  <img
-                    src={`http://localhost:6189${e.images[0]}`}
-                    alt={e.title}
-                    loading="lazy"
-                    style={{ objectFit: "cover" }}
-                  />
-                </AspectRatio>
+                {e.images && e.images.length > 0 ? (
+                  <AspectRatio ratio="1" sx={{ width: 200, minWidth: 200 }}>
+                    <img
+                      src={`http://localhost:6189${e.images[0]}`}
+                      alt={e.title}
+                      loading="lazy"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </AspectRatio>
+                ) : (
+                  <Box
+                    sx={{
+                      width: 200,
+                      minWidth: 200,
+                      aspectRatio: "1",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      bgcolor: "background.level1",
+                      borderRadius: "md",
+                    }}
+                  >
+                    <Typography level="body-sm" sx={{ color: "text.tertiary" }}>
+                      Немає фото
+                    </Typography>
+                  </Box>
+                )}
 
                 {/* Контент */}
                 <CardContent sx={{ flex: 1, p: 2 }}>

@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { getExerciseById, updateExerciseById } from "../../api/exerciseApi";
+import { deleteExerciseImage, getExerciseById, updateExerciseById } from "../../api/exerciseApi";
 import { getMuscleByGroup } from "../../api/baseDataApi";
 import MuscleVisualizer from "../../../components/MuscleVisualizer/index";
 import {
@@ -20,7 +20,15 @@ import {
   Stack,
   Checkbox,
   Sheet,
+  IconButton,
 } from "@mui/joy";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+interface ExerciseImage {
+  id: number;
+  path: string;
+  order: number;
+}
 
 export default function ViewOrEditSingleExercisePage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,6 +72,17 @@ export default function ViewOrEditSingleExercisePage() {
       setMuscles((prev) => prev.filter((m) => m !== value));
     }
   };
+
+  async function handleDeleteImage(imageId: number) {
+    try {
+      await deleteExerciseImage(Number(params.id), imageId);
+      await getExersice();
+      toast.success("Зображення успішно видалено");
+    } catch (error) {
+      console.log(error);
+      toast.error("Сталася помилка при видаленні зображення");
+    }
+  }
 
   async function handleUpdate() {
     try {
@@ -296,11 +315,30 @@ export default function ViewOrEditSingleExercisePage() {
           }}
         >
           {currExercise.images?.length ? (
-            currExercise.images.map((item: string, index: number) => (
-              <Box key={index} sx={{ position: "relative" }}>
+            currExercise.images.map((item: ExerciseImage) => (
+              <Box key={item.id} sx={{ position: "relative" }}>
                 <AspectRatio ratio="1" sx={{ borderRadius: "md", overflow: "hidden" }}>
-                  <img src={`http://localhost:6189${item}`} alt="" loading="lazy" />
+                  <img src={`http://localhost:6189${item.path}`} alt="" loading="lazy" />
                 </AspectRatio>
+                <IconButton
+                  color="danger"
+                  size="sm"
+                  variant="solid"
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    opacity: 0.9,
+                    "&:hover": { opacity: 1 },
+                  }}
+                  onClick={() => {
+                    if (window.confirm("Ви впевнені, що хочете видалити це зображення?")) {
+                      handleDeleteImage(item.id);
+                    }
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
               </Box>
             ))
           ) : (
