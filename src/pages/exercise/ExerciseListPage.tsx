@@ -49,13 +49,15 @@ export default function ExerciseListPage() {
       </Typography>
 
       {exercises.length > 0 ? (
-        <Box sx={{ 
-          display: "grid", 
-          gridTemplateColumns: "repeat(auto-fill, minmax(450px, 1fr))",
-          gap: 2,
-          overflow: "auto",
-          pr: 1
-        }}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(450px, 1fr))",
+            gap: 2,
+            overflow: "auto",
+            pr: 1,
+          }}
+        >
           {exercises.map((e, index) => (
             <Card
               key={index}
