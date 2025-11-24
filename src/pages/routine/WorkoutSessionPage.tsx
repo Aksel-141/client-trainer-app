@@ -171,6 +171,7 @@ export default function RoutineStartPage() {
             prepTimer={exerciseTimer.prepTimer}
             setTimer={exerciseTimer.setTimer}
             isCompletingState={workoutProgress.isCompletingState}
+            isRunning={isWorkoutRunning}
             onCompleteSet={handleSetComplete}
             onSkipExercise={() => {
               exerciseTimer.clearSetInterval();
@@ -184,7 +185,7 @@ export default function RoutineStartPage() {
       )}
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
-        <Button onClick={EndRoutine} color="primary" size="lg">
+        <Button onClick={EndRoutine} color="primary" size="lg" disabled={!isWorkoutRunning}>
           Завершити тренування
         </Button>
       </Box>

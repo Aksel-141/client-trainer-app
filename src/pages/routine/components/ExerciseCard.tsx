@@ -9,6 +9,7 @@ interface ExerciseCardProps {
   prepTimer: number;
   setTimer: number;
   isCompletingState: boolean;
+  isRunning: boolean;
   onCompleteSet: () => void;
   onSkipExercise: () => void;
 }
@@ -21,6 +22,7 @@ export default function ExerciseCard({
   prepTimer,
   setTimer,
   isCompletingState,
+  isRunning,
   onCompleteSet,
   onSkipExercise,
 }: ExerciseCardProps) {
@@ -61,7 +63,12 @@ export default function ExerciseCard({
       </Box>
 
       <Stack direction="row" spacing={1}>
-        <Button onClick={onCompleteSet} color="primary" size="lg" disabled={isCompletingState || isPreparing}>
+        <Button
+          onClick={onCompleteSet}
+          color="primary"
+          size="lg"
+          disabled={isCompletingState || isPreparing || !isRunning}
+        >
           Завершити сет
         </Button>
         <Button onClick={onSkipExercise} variant="outlined" size="lg">
