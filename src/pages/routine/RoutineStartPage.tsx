@@ -414,7 +414,13 @@ export default function RoutineStartPage() {
             <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 3 }}>
               <AspectRatio ratio="1" sx={{ width: 120 }}>
                 <img
-                  src={`http://localhost:6189${JSON.parse(currentExercise.exercise.images)[0]}`}
+                  src={
+                    currentExercise?.exercise?.images && typeof currentExercise.exercise.images === "string"
+                      ? `http://localhost:6189${JSON.parse(currentExercise.exercise.images)[0]}`
+                      : currentExercise?.exercise?.images?.[0]?.path
+                      ? `http://localhost:6189${currentExercise.exercise.images[0].path}`
+                      : "/placeholder-exercise.jpg"
+                  }
                   alt="exercise"
                   style={{ objectFit: "cover" }}
                 />
