@@ -7,6 +7,7 @@ import { createRoutine } from "../../../../../api/routineApi";
 export function UseRoutineForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [categoryId, setCategoryId] = useState<number | null>(null);
   const [routineExercises, setRoutineExercises] = useState<RoutineExerciseInput[]>([]); //Вправи в рутині
   const [isSaving, setIsSaving] = useState(false);
 
@@ -69,11 +70,12 @@ export function UseRoutineForm() {
     setIsSaving(true);
 
     try {
-      await createRoutine(title, description, routineExercises);
+      await createRoutine(title, description, categoryId, routineExercises);
       toast.success("Успішно створено");
       // незабуаємо очистити формочку після успішного збереження
       setTitle("");
       setDescription("");
+      setCategoryId(null);
       setRoutineExercises([]);
     } catch (error) {
       toast.error("Сталася помилка, детальніше в консолі");
@@ -87,12 +89,14 @@ export function UseRoutineForm() {
     // Стан
     title,
     description,
+    categoryId,
     routineExercises,
     isSaving,
 
     // Функції форми
     setTitle,
     setDescription,
+    setCategoryId,
 
     // Функції роботи з вправами
     addExercise,

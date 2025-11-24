@@ -15,10 +15,16 @@ export function getRoutine(id: number) {
 export function deleteRoutine(id: number) {
   return axios.delete(`/routine/${id}`);
 }
-export function createRoutine(title: string, description: string, routineExercises: RoutineExerciseInput[]) {
+export function createRoutine(
+  title: string,
+  description: string,
+  categoryId: number | null,
+  routineExercises: RoutineExerciseInput[]
+) {
   return axios.post(`/routine/create`, {
     title,
     description,
+    categoryId,
     routineExercises,
   });
 }
