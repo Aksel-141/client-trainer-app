@@ -171,7 +171,7 @@ export default function ExerciseListPage() {
               <Divider />
             </Card>
           ))}
-        </Stack>
+        </Box>
       ) : (
         <Box
           sx={{
