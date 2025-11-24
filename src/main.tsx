@@ -13,7 +13,7 @@ import CreateExercisePage from "./pages/exercise/CreateExercisePage";
 import ExerciseListPage from "./pages/exercise/ExerciseListPage";
 import CreateRoutinePage from "./pages/routine/CreateRoutinePage";
 import RoutineListPage from "./pages/routine/RoutineListPage";
-import RoutineStartPage from "./pages/routine/RoutineStartPage";
+import RoutineStartPage from "./pages/routine/WorkoutSessionPage";
 import HomePage from "./pages/home/HomePage";
 import ViewOrEditSingleExercisePage from "./pages/exercise/ViewOrEditSingleExercisePage";
 
