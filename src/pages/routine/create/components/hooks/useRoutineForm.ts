@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { createRoutine } from "../../../../api/routineApi";
-import type { RoutineExerciseInput } from "../../../../../types";
+// import { createRoutine } from "../../../../api/routineApi";
+import type { RoutineExerciseInput } from "../../../../../../types/index";
+import { createRoutine } from "../../../../../api/routineApi";
 
 export function UseRoutineForm() {
   const [title, setTitle] = useState("");

@@ -11,9 +11,9 @@ import navRoutes from "./router";
 //Сторінки
 import CreateExercisePage from "./pages/exercise/CreateExercisePage";
 import ExerciseListPage from "./pages/exercise/ExerciseListPage";
-import CreateRoutinePage from "./pages/routine/CreateRoutinePage";
-import RoutineListPage from "./pages/routine/RoutineListPage";
-import RoutineStartPage from "./pages/routine/WorkoutSessionPage";
+import CreateRoutinePage from "./pages/routine/create/CreateRoutinePage";
+import RoutineListPage from "./pages/routine/list/RoutineListPage";
+import RoutineStartPage from "./pages/routine/workout-session/WorkoutSessionPage";
 import HomePage from "./pages/home/HomePage";
 import ViewOrEditSingleExercisePage from "./pages/exercise/ViewOrEditSingleExercisePage";
 
