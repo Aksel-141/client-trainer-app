@@ -1,11 +1,14 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import navRoutes from "../../router";
-import { Box, Card, CardContent, AspectRatio, Typography, IconButton, Chip, Stack, Divider } from "@mui/joy";
+import { Box, Card, CardContent, AspectRatio, Typography, IconButton, Chip, Stack, Divider, Button } from "@mui/joy";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { toast } from "react-toastify";
 import { Link } from "react-router";
+import { exportExercises, importExercises } from "../../api/exerciseApi";
 
 type Exercise = {
   id: number;
@@ -17,6 +20,7 @@ type Exercise = {
 
 export default function ExerciseListPage() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function getData() {
     try {
@@ -38,15 +42,92 @@ export default function ExerciseListPage() {
       console.log(error);
     }
   }
+
+  async function handleExport() {
+    try {
+      const response = await exportExercises();
+      const dataStr = JSON.stringify(response.data, null, 2);
+      const dataBlob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `exercises-export-${new Date().toISOString().split("T")[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success(`Експортовано ${response.data.count} вправ`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Помилка при експорті вправ");
+    }
+  }
+
+  async function handleImport(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const fileContent = await file.text();
+      const data = JSON.parse(fileContent);
+
+      if (!data.exercises || !Array.isArray(data.exercises)) {
+        toast.error("Невірний формат файлу");
+        return;
+      }
+
+      const response = await importExercises(data.exercises);
+
+      if (response.data.ok) {
+        const { success, skipped, errors } = response.data.results;
+        toast.success(`Імпорт завершено: ${success} успішно, ${skipped} пропущено, ${errors} помилок`);
+
+        // Показати деталі якщо є пропущені або помилки
+        if (skipped > 0 || errors > 0) {
+          console.log("Деталі імпорту:", response.data.results.details);
+        }
+
+        getData(); // Оновити список
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Помилка при імпорті вправ");
+    } finally {
+      // Очистити input для можливості повторного імпорту того ж файлу
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  }
+
   useEffect(() => {
     getData();
   }, []);
 
   return (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-      <Typography level="h3" sx={{ mb: 2 }}>
-        Всі вправи ({exercises.length})
-      </Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography level="h3">Всі вправи ({exercises.length})</Typography>
+
+        <Stack direction="row" spacing={1}>
+          <Button
+            startDecorator={<FileDownloadIcon />}
+            onClick={handleExport}
+            variant="outlined"
+            color="primary"
+            disabled={exercises.length === 0}
+          >
+            Експорт
+          </Button>
+          <Button
+            startDecorator={<FileUploadIcon />}
+            onClick={() => fileInputRef.current?.click()}
+            variant="outlined"
+            color="primary"
+          >
+            Імпорт
+          </Button>
+          <input ref={fileInputRef} type="file" accept=".json" onChange={handleImport} style={{ display: "none" }} />
+        </Stack>
+      </Stack>
 
       {exercises.length > 0 ? (
         <Box

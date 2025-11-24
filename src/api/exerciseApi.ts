@@ -11,3 +11,11 @@ export function updateExerciseById(id: number, formData: FormData) {
 export function deleteExerciseImage(exerciseId: number, imageId: number) {
   return axios.delete(`/exercise/${exerciseId}/image/${imageId}`);
 }
+
+export function exportExercises() {
+  return axios.get("/exercise/export");
+}
+
+export function importExercises(exercises: any[]) {
+  return axios.post("/exercise/import", { exercises });
+}
