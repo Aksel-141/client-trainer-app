@@ -1,5 +1,5 @@
 import { Box, Button, Card, FormControl, FormLabel, Input, Stack, Typography } from "@mui/joy";
-import type { Exercise, RoutineExerciseInput } from "../../../../types";
+import type { Exercise, RoutineExerciseInput } from "../../../../../types/index";
 
 interface RoutineExerciseCardProps {
   exercise: Exercise; // дані вправи (title, description)
