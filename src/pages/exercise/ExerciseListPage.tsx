@@ -43,30 +43,36 @@ export default function ExerciseListPage() {
   }, []);
 
   return (
-    <Box sx={{ width: "100%", height: "100%" }}>
-      <Typography level="h2" sx={{ mb: 3 }}>
-        Список вправ
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <Typography level="h3" sx={{ mb: 2 }}>
+        Всі вправи ({exercises.length})
       </Typography>
 
       {exercises.length > 0 ? (
-        <Stack spacing={2}>
+        <Box sx={{ 
+          display: "grid", 
+          gridTemplateColumns: "repeat(auto-fill, minmax(450px, 1fr))",
+          gap: 2,
+          overflow: "auto",
+          pr: 1
+        }}>
           {exercises.map((e, index) => (
             <Card
               key={index}
               variant="outlined"
               sx={{
-                overflow: "hidden",
+                p: 2,
                 transition: "all 0.2s",
                 "&:hover": {
-                  boxShadow: "md",
+                  boxShadow: "sm",
                   borderColor: "primary.200",
                 },
               }}
             >
-              <Box sx={{ display: "flex", gap: 2 }}>
+              <Box sx={{ display: "flex", gap: 1.5 }}>
                 {/* Зображення вправи */}
                 {e.images && e.images.length > 0 ? (
-                  <AspectRatio ratio="1" sx={{ width: 200, minWidth: 200 }}>
+                  <AspectRatio ratio="1" sx={{ width: 100, minWidth: 100 }}>
                     <img
                       src={`http://localhost:6189${e.images[0]}`}
                       alt={e.title}
@@ -77,19 +83,17 @@ export default function ExerciseListPage() {
                 ) : (
                   <Box
                     sx={{
-                      width: 200,
-                      minWidth: 200,
+                      width: 100,
+                      minWidth: 100,
                       aspectRatio: "1",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       bgcolor: "background.level1",
-                      borderRadius: "md",
+                      borderRadius: "sm",
                     }}
                   >
-                    <Typography level="body-sm" sx={{ color: "text.tertiary" }}>
-                      Немає фото
-                    </Typography>
+                    <Typography level="h4">📷</Typography>
                   </Box>
                 )}
 

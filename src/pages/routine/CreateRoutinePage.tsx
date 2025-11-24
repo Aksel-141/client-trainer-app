@@ -56,27 +56,30 @@ export default function CreateRoutinePage() {
     getDataExercises();
   }, []);
   return (
-    <Box>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-        <Typography level="h2">Додати рутину</Typography>
-        <Button onClick={handleSave} size="lg" color="primary" loading={isSaving}>
-          Створити рутину
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography level="h3">Створити програму</Typography>
+        <Button onClick={handleSave} size="md" color="primary" loading={isSaving}>
+          Зберегти
         </Button>
       </Stack>
-      <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3 }}>
-        {/* Ліва частина */}
-        <RoutineForm
-          title={title}
-          description={description}
-          onTitleChange={setTitle}
-          onDescriptionChange={setDescription}
-        />
-        {/*Права частина  */}
+      <Box sx={{ display: "grid", gridTemplateColumns: "400px 1fr", gap: 2, flex: 1, overflow: "hidden" }}>
+        {/* Ліва частина - форма */}
         <Box>
-          <Typography level="h3" sx={{ mb: 2 }}>
-            Вправи в рутині
+          <RoutineForm
+            title={title}
+            description={description}
+            onTitleChange={setTitle}
+            onDescriptionChange={setDescription}
+          />
+        </Box>
+
+        {/* Права частина - список вправ */}
+        <Box sx={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <Typography level="title-lg" sx={{ mb: 1.5 }}>
+            Вправи ({routineExercises.length})
           </Typography>
-          <Stack spacing={2} sx={{ mb: 2 }}>
+          <Stack spacing={1.5} sx={{ flex: 1, overflow: "auto", pr: 1 }}>
             {routineExercises.map((ex, index) => {
               const exercise = exercisesList.find((item) => item.id === ex.exerciseId);
               // Якщо вправу не знайдено, не рендеримо картку
