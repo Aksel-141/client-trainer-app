@@ -45,6 +45,11 @@ export default function RoutineListPage() {
                 <Typography level="h3" sx={{ mb: 1 }}>
                   {routine.title}
                 </Typography>
+                {routine.categories && routine.categories.length > 0 && (
+                  <Typography level="body-sm" sx={{ mb: 1, color: "primary.500" }}>
+                    {routine.categories.map((rc: any) => `${rc.category.icon} ${rc.category.nameUa}`).join(", ")}
+                  </Typography>
+                )}
                 {routine.description && (
                   <Typography level="body-md" sx={{ mb: 2, color: "text.secondary" }}>
                     {routine.description}

@@ -19,14 +19,14 @@ export default function CreateRoutinePage() {
     // Стан
     title,
     description,
-    categoryId,
+    categoryIds,
     routineExercises,
     isSaving,
 
     // Функції форми
     setTitle,
     setDescription,
-    setCategoryId,
+    setCategoryIds,
 
     // Функції роботи з вправами
     addExercise,
@@ -71,10 +71,10 @@ export default function CreateRoutinePage() {
           <RoutineForm
             title={title}
             description={description}
-            categoryId={categoryId}
+            categoryIds={categoryIds}
             onTitleChange={setTitle}
             onDescriptionChange={setDescription}
-            onCategoryChange={setCategoryId}
+            onCategoryChange={setCategoryIds}
           />
         </Box>
 

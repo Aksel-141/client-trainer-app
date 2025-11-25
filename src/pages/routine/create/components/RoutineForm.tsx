@@ -6,10 +6,10 @@ import { toast } from "react-toastify";
 interface RoutineFormProps {
   title: string;
   description: string;
-  categoryId: number | null;
+  categoryIds: number[];
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
-  onCategoryChange: (value: number | null) => void;
+  onCategoryChange: (value: number[]) => void;
 }
 
 type Category = {
@@ -24,7 +24,7 @@ type Category = {
 export default function RoutineForm({
   title,
   description,
-  categoryId,
+  categoryIds,
   onTitleChange,
   onDescriptionChange,
   onCategoryChange,
@@ -57,12 +57,21 @@ export default function RoutineForm({
         />
       </FormControl>
       <FormControl sx={{ mb: 2 }}>
-        <FormLabel>Категорія (необов'язково)</FormLabel>
+        <FormLabel>Категорії (необов'язково)</FormLabel>
         <Select
-          placeholder="Оберіть категорію"
+          multiple
+          placeholder="Оберіть категорії"
           size="lg"
-          value={categoryId}
-          onChange={(_, newValue) => onCategoryChange(newValue)}
+          value={categoryIds}
+          onChange={(_, newValue) => onCategoryChange(newValue as number[])}
+          renderValue={(selected) =>
+            selected
+              .map((option) => {
+                const cat = categories.find((c) => c.id === option.value);
+                return cat ? `${cat.icon} ${cat.nameUa}` : "";
+              })
+              .join(", ")
+          }
         >
           {categories.map((cat) => (
             <Option key={cat.id} value={cat.id}>
