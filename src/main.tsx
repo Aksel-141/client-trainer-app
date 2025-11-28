@@ -51,11 +51,12 @@ const router = createBrowserRouter([
         path: navRoutes.routineEdit.path,
         element: <ViewOrEditSingleRoutinePage />,
       },
-      {
-        path: navRoutes.routineStart.path,
-        element: <RoutineStartPage />,
-      },
     ],
+  },
+  // Workout session - повноекранний режим без sidebar
+  {
+    path: navRoutes.routineStart.path,
+    element: <RoutineStartPage />,
   },
 ]);
 
