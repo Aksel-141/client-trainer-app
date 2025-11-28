@@ -90,6 +90,16 @@ export default function RoutineListPage() {
                 >
                   Почати
                 </Button>
+                <Button
+                  color="neutral"
+                  variant="outlined"
+                  size="sm"
+                  onClick={() => {
+                    navigate(`/routine/${routine.id}/edit`);
+                  }}
+                >
+                  Редагувати
+                </Button>
                 <Button color="danger" variant="soft" size="sm" onClick={() => delRoutine(routine.id)}>
                   Видалити
                 </Button>

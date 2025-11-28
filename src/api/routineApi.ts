@@ -28,3 +28,17 @@ export function createRoutine(
     routineExercises,
   });
 }
+export function updateRoutine(
+  id: number,
+  title: string,
+  description: string,
+  categoryIds: number[],
+  routineExercises: RoutineExerciseInput[]
+) {
+  return axios.patch(`/routine/${id}`, {
+    title,
+    description,
+    categoryIds,
+    routineExercises,
+  });
+}

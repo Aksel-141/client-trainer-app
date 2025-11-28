@@ -23,6 +23,10 @@ const navRoutes = {
     title: "Список тренувань",
     path: "/routine/all",
   },
+  routineEdit: {
+    title: "Редагувати рутину",
+    path: "/routine/:id/edit",
+  },
   routineStart: {
     title: "Початок тренування",
     path: "/routine/:id/start",
