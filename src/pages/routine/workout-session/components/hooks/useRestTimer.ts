@@ -9,7 +9,7 @@ export function useRestTimer({ onRestComplete }: UseRestTimerProps = {}) {
   const [restSeconds, setRestSeconds] = useState(0);
   const [totalRestTime, setTotalRestTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<number | null>(null);
 
   const startRestTimer = (seconds: number) => {
     if (seconds <= 0) return;
