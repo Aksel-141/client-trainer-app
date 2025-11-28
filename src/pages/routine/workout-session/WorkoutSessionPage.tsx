@@ -150,19 +150,35 @@ export default function RoutineStartPage() {
   const progressPercent = workoutProgress.getProgress();
 
   return (
-    <Box>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-        <Typography level="h2">{routine?.title}</Typography>
-        <WorkoutTimer
-          seconds={workoutSeconds}
-          isRunning={isWorkoutRunning}
-          onStart={startWorkoutTimer}
-          onPause={pauseWorkoutTimer}
-        />
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ px: 2, py: 1, flexShrink: 0 }}>
+        <Typography level="h3">{routine?.title}</Typography>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <WorkoutTimer
+            seconds={workoutSeconds}
+            isRunning={isWorkoutRunning}
+            onStart={startWorkoutTimer}
+            onPause={pauseWorkoutTimer}
+          />
+          <Button onClick={EndRoutine} color="primary" size="md" disabled={!isWorkoutRunning}>
+            Завершити
+          </Button>
+        </Stack>
       </Stack>
 
       {currentExercise && (
-        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 3 }}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "1fr 320px",
+            gap: 2,
+            flex: 1,
+            minHeight: 0,
+            overflow: "hidden",
+            px: 2,
+            pb: 2,
+          }}
+        >
           <ExerciseCard
             exercise={currentExercise}
             currentSetIndex={workoutProgress.currentSetIndex}
@@ -183,12 +199,6 @@ export default function RoutineStartPage() {
           <CompletedSetsList completed={workoutProgress.completed} />
         </Box>
       )}
-
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
-        <Button onClick={EndRoutine} color="primary" size="lg" disabled={!isWorkoutRunning}>
-          Завершити тренування
-        </Button>
-      </Box>
     </Box>
   );
 }
