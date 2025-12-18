@@ -17,7 +17,7 @@ export default function CreateExercisePage() {
     muscleByGroup,
     setTitle,
     setDescription,
-    // setMuscles,
+    //setMuscles,
     setMuscleByGroup,
     onImageChange,
     onVideoChange,
@@ -56,6 +56,7 @@ export default function CreateExercisePage() {
 
   useEffect(() => {
     getBaseData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

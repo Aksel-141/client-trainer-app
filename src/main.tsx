@@ -10,13 +10,13 @@ import axios from "axios";
 import navRoutes from "./router";
 //Сторінки
 import CreateExercisePage from "./pages/exercise/create/CreateExercisePage";
-import ExerciseListPage from "./pages/exercise/ExerciseListPage";
 import CreateRoutinePage from "./pages/routine/create/CreateRoutinePage";
 import RoutineListPage from "./pages/routine/list/RoutineListPage";
 import RoutineStartPage from "./pages/routine/workout-session/WorkoutSessionPage";
 import HomePage from "./pages/home/HomePage";
 import ViewOrEditSingleExercisePage from "./pages/exercise/ViewOrEditSingleExercisePage";
 import ViewOrEditSingleRoutinePage from "./pages/routine/edit/ViewOrEditSingleRoutinePage";
+import ExerciseListPage from "./pages/exercise/list/ExerciseListPage";
 
 const router = createBrowserRouter([
   {

@@ -1,5 +1,9 @@
 import axios from "axios";
 
+export function getExerciseList() {
+  return axios.get(`/exercise/all`);
+}
+
 export function getExerciseById(id: number) {
   return axios.get(`/exercise/${id}`);
 }
@@ -16,6 +20,7 @@ export function exportExercises() {
   return axios.get("/exercise/export");
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function importExercises(exercises: any[]) {
   return axios.post("/exercise/import", { exercises });
 }
