@@ -9,7 +9,7 @@ import axios from "axios";
 //Роутер
 import navRoutes from "./router";
 //Сторінки
-import CreateExercisePage from "./pages/exercise/CreateExercisePage";
+import CreateExercisePage from "./pages/exercise/create/CreateExercisePage";
 import ExerciseListPage from "./pages/exercise/ExerciseListPage";
 import CreateRoutinePage from "./pages/routine/create/CreateRoutinePage";
 import RoutineListPage from "./pages/routine/list/RoutineListPage";

@@ -14,3 +14,17 @@ export type RoutineExerciseInput = {
   duration?: number;
   rest?: number;
 };
+
+export type MuscleByGroup = {
+  id: number;
+  nameEn: string;
+  nameUa: string;
+  description: string;
+  muscles: Muscle[];
+};
+export type Muscle = {
+  id: number;
+  nameEn: string;
+  nameUa: string;
+  description: string;
+};
