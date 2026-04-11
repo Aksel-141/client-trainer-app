@@ -68,14 +68,15 @@ export default function RoutineForm({
             selected
               .map((option) => {
                 const cat = categories.find((c) => c.id === option.value);
-                return cat ? `${cat.icon} ${cat.nameUa}` : "";
+                return cat ? ` ${cat.name}` : "";
               })
               .join(", ")
           }
         >
           {categories.map((cat) => (
             <Option key={cat.id} value={cat.id}>
-              {cat.icon} {cat.nameUa}
+              {/* {cat.icon} */}
+              {cat.name}
             </Option>
           ))}
         </Select>
