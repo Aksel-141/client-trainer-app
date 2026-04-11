@@ -5,7 +5,8 @@ import navRoutes from "../../../router/index";
 import { toast } from "react-toastify";
 import { getMuscleByGroup } from "../../../api/baseDataApi";
 import ExerciseForm from "./components/ExerciseForm";
-import { useRoutineForm } from "./components/hooks/useExerciseForm";
+
+import { useExerciseForm } from "./components/hooks/useExerciseForm";
 
 export default function CreateExercisePage() {
   const {
@@ -17,28 +18,29 @@ export default function CreateExercisePage() {
     muscleByGroup,
     setTitle,
     setDescription,
-    //setMuscles,
     setMuscleByGroup,
     onImageChange,
     onVideoChange,
     onMusclesChange,
-  } = useRoutineForm();
+  } = useExerciseForm();
 
   const handleSave = async () => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
+
+    // JSON-рядок з масивом англійських назв м'язів (ідеально підходить для нового бекенду)
     formData.append("muscles", JSON.stringify(muscles));
-    // muscles.forEach((m) => formData.append("mucles", m));
+
     images.forEach((img) => formData.append("images", img));
 
     if (video) formData.append("video", video);
     try {
       await axios.post(`${navRoutes.createExercise.path}`, formData);
-      toast.success("Успішно створено");
+      toast.success("Вправу успішно створено");
     } catch (error) {
-      toast.error("Сталася помилка, детльніше в консолі");
-      console.log(error);
+      toast.error("Сталася помилка, детальніше в консолі");
+      console.error(error);
     }
   };
 
@@ -46,13 +48,13 @@ export default function CreateExercisePage() {
   async function getBaseData() {
     try {
       const mbg = await getMuscleByGroup();
+      // Використовуємо сирі дані з бекенду (translations масиви)
       setMuscleByGroup(mbg.data.result);
     } catch (error) {
       toast.error("Сталася помилка завантаження груп м'язів!");
-      console.log(error);
+      console.error(error);
     }
   }
-  console.log(muscleByGroup);
 
   useEffect(() => {
     getBaseData();

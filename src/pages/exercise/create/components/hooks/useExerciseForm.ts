@@ -1,13 +1,13 @@
 import { useState } from "react";
-import type { MuscleByGroup } from "../../../../../../types";
+import type { ServerMuscleByGroup } from "../../../../../../types";
 
-export function useRoutineForm() {
+export function useExerciseForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<File[]>([]);
   const [video, setVideo] = useState<File | null>(null);
   const [muscles, setMuscles] = useState<string[]>([]);
-  const [muscleByGroup, setMuscleByGroup] = useState<MuscleByGroup[]>([]);
+  const [muscleByGroup, setMuscleByGroup] = useState<ServerMuscleByGroup[]>([]);
 
   const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {

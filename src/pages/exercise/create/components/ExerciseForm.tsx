@@ -1,5 +1,5 @@
 import { Box, Button, Card, Checkbox, Input, Stack, Textarea, Typography } from "@mui/joy";
-import type { MuscleByGroup } from "../../../../../types";
+import type { ServerMuscleByGroup } from "../../../../../types";
 
 interface ExerciseFormProps {
   title: string;
@@ -7,7 +7,7 @@ interface ExerciseFormProps {
   images: File[];
   video: File | null;
   muscles: string[];
-  muscleByGroup: MuscleByGroup[];
+  muscleByGroup: ServerMuscleByGroup[];
 
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
@@ -82,25 +82,34 @@ export default function ExerciseForm({
           М'язи
         </Typography>
         <Stack spacing={2}>
-          {muscleByGroup.map((item, index) => (
-            <Card key={index} variant="outlined" sx={{ p: 1.5 }}>
-              <Typography level="title-sm" sx={{ mb: 1 }}>
-                {item.nameUa}
-              </Typography>
-              <Stack spacing={0.5}>
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {item.muscles.map((muscle: any) => (
-                  <Checkbox
-                    key={muscle.id}
-                    label={muscle.nameUa}
-                    value={muscle.nameEn}
-                    onChange={onMusclesChange}
-                    size="sm"
-                  />
-                ))}
-              </Stack>
-            </Card>
-          ))}
+          {muscleByGroup.map((item, index) => {
+            const groupNameUa =
+              item.translations?.find((t: any) => t.lang === "uk" || t.lang === "ua")?.name ||
+              item.description ||
+              "Без назви";
+
+            return (
+              <Card key={index} variant="outlined" sx={{ p: 1.5 }}>
+                <Typography level="title-sm" sx={{ mb: 1 }}>
+                  {groupNameUa}
+                </Typography>
+                <Stack spacing={0.5}>
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {item.muscles?.map((muscle: any) => {
+                    const nameUa =
+                      muscle.translations?.find((t: any) => t.lang === "uk" || t.lang === "ua")?.name ||
+                      muscle.muscleName ||
+                      "Без назви";
+                    const nameEn = muscle.translations?.find((t: any) => t.lang === "en")?.name || "Unknown";
+
+                    return (
+                      <Checkbox key={muscle.id} label={nameUa} value={nameEn} onChange={onMusclesChange} size="sm" />
+                    );
+                  })}
+                </Stack>
+              </Card>
+            );
+          })}
         </Stack>
       </Box>
     </>
