@@ -31,7 +31,11 @@ export function useExerciseTimer({ onSetComplete, onPrepComplete }: UseExerciseT
   const startPrepTimer = (resetTimer = false, duration?: number) => {
     clearPrepInterval();
     setIsPreparing(true);
-    const start = resetTimer || prepTimer === 0 ? 5 : prepTimer;
+    // Determine starting prep seconds. If resetTimer=true use default 5.
+    let start: number;
+    if (resetTimer) start = 5;
+    else if (prepTimer > 0) start = prepTimer;
+    else start = 5;
     setPrepTimer(start);
 
     prepIntervalRef.current = window.setInterval(() => {

@@ -41,8 +41,9 @@ export default function RoutineStartPage() {
   };
 
   const handlePrepComplete = (duration?: number) => {
-    if (duration) {
-      exerciseTimer.startSetTimer(duration);
+    // duration may be 0 — treat 0 as valid value
+    if (duration !== undefined && duration !== null) {
+      exerciseTimer.startSetTimer(Number(duration));
     }
   };
 
@@ -81,7 +82,9 @@ export default function RoutineStartPage() {
       localStorage.setItem("savedRoutineId", String(routine?.id));
       localStorage.setItem("workoutStartTime", new Date().toISOString());
       startWorkoutTimer();
-      exerciseTimer.startPrepTimer(true);
+      // start prep with the first exercise duration (may be 0)
+      const firstEx = routine?.exercises?.[0];
+      exerciseTimer.startPrepTimer(true, firstEx?.duration);
     }
   }
 
