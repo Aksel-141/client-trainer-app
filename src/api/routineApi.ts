@@ -19,7 +19,7 @@ export function createRoutine(
   title: string,
   description: string,
   categoryIds: number[],
-  routineExercises: RoutineExerciseInput[]
+  routineExercises: RoutineExerciseInput[],
 ) {
   return axios.post(`/routine/create`, {
     title,
@@ -33,7 +33,7 @@ export function updateRoutine(
   title: string,
   description: string,
   categoryIds: number[],
-  routineExercises: RoutineExerciseInput[]
+  routineExercises: RoutineExerciseInput[],
 ) {
   return axios.patch(`/routine/${id}`, {
     title,

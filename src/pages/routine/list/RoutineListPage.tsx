@@ -13,6 +13,7 @@ export default function RoutineListPage() {
       const data = await getRoutineAll();
       console.log(data);
 
+      // server responds with { ok: true, data: [...] }
       setroutines(data.data.data);
     } catch (error) {
       console.log(error);
@@ -47,7 +48,25 @@ export default function RoutineListPage() {
                 </Typography>
                 {routine.categories && routine.categories.length > 0 && (
                   <Typography level="body-sm" sx={{ mb: 1, color: "primary.500" }}>
-                    {routine.categories.map((rc: any) => `${rc.category.icon} ${rc.category.nameUa}`).join(", ")}
+                    {routine.categories.map((rc: any) => (
+                      <Box
+                        key={`${rc.routineId}-${rc.categoryId}`}
+                        component="span"
+                        sx={{ display: "inline-flex", alignItems: "center", mr: 1 }}
+                      >
+                        <Box
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            bgcolor: rc.category?.color || "#ccc",
+                            borderRadius: "50%",
+                            display: "inline-block",
+                            mr: 1,
+                          }}
+                        />
+                        <Box component="span">{rc.category?.name}</Box>
+                      </Box>
+                    ))}
                   </Typography>
                 )}
                 {routine.description && (
@@ -57,8 +76,8 @@ export default function RoutineListPage() {
                 )}
                 <List size="sm">
                   {/* eslint-disable @typescript-eslint/no-explicit-any */}
-                  {routine?.exercises
-                    .sort((a: any, b: any) => a.order - b.order)
+                  {(routine.exercises || [])
+                    .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
                     .map((re: any) => (
                       <ListItem key={re.id}>
                         <ListItemContent>
@@ -72,7 +91,7 @@ export default function RoutineListPage() {
                             {re.rest ? ` | rest ${re.rest}s` : ""}
                           </Typography>
                           <Typography level="body-xs" sx={{ color: "text.tertiary" }}>
-                            М'язи: {re.exercise.muscles.map((m: any) => m.muscle.nameEn).join(", ")}
+                            М'язи: {re.exercise.muscles.map((m: any) => m.muscle.nameUa || m.muscle.nameEn).join(", ")}
                           </Typography>
                         </ListItemContent>
                       </ListItem>
