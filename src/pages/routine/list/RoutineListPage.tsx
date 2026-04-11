@@ -55,6 +55,7 @@ export default function RoutineListPage() {
                         sx={{ display: "inline-flex", alignItems: "center", mr: 1 }}
                       >
                         <Box
+                          component="span"
                           sx={{
                             width: 20,
                             height: 20,
