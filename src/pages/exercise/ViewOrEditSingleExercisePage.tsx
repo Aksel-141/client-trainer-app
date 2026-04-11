@@ -47,6 +47,8 @@ export default function ViewOrEditSingleExercisePage() {
   async function getExersice() {
     try {
       const res = await getExerciseById(Number(params.id));
+      console.log("[DEBUG] getExerciseById response:", res.data);
+      console.log("[DEBUG] muscles from API:", res.data.result?.muscles);
       setCurrExercise(res.data.result);
     } catch (error) {
       console.log(error);
@@ -249,26 +251,41 @@ export default function ViewOrEditSingleExercisePage() {
               Виберіть м'язи, які задіяні у цій вправі:
             </Typography>
             <Stack spacing={2}>
-              {muscleByGroup.map((group, index) => (
-                <Box key={index}>
-                  <Typography level="title-lg" sx={{ mb: 1.5, color: "primary.plainColor" }}>
-                    {group.nameUa}
-                  </Typography>
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    {group.muscles.map((muscle: any) => (
-                      <Checkbox
-                        key={muscle.id}
-                        label={muscle.nameUa}
-                        value={muscle.nameEn}
-                        checked={muscles.includes(muscle.nameEn)}
-                        onChange={onChangeMuscles}
-                        variant="soft"
-                      />
-                    ))}
+              {muscleByGroup.map((group, index) => {
+                const groupNameUa =
+                  group.translations?.find((t: any) => t.lang === "uk" || t.lang === "ua")?.name ||
+                  group.description ||
+                  "Без назви";
+
+                return (
+                  <Box key={index}>
+                    <Typography level="title-lg" sx={{ mb: 1.5, color: "primary.plainColor" }}>
+                      {groupNameUa}
+                    </Typography>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                      {group.muscles?.map((muscle: any) => {
+                        const nameUa =
+                          muscle.translations?.find((t: any) => t.lang === "uk" || t.lang === "ua")?.name ||
+                          muscle.muscleName ||
+                          "Без назви";
+                        const nameEn = muscle.translations?.find((t: any) => t.lang === "en")?.name || "Unknown";
+
+                        return (
+                          <Checkbox
+                            key={muscle.id}
+                            label={nameUa}
+                            value={nameEn}
+                            checked={muscles.includes(nameEn)}
+                            onChange={onChangeMuscles}
+                            variant="soft"
+                          />
+                        );
+                      })}
+                    </Box>
                   </Box>
-                </Box>
-              ))}
+                );
+              })}
             </Stack>
           </Sheet>
         </Box>
